@@ -1,0 +1,195 @@
+----- RESOLUTION DU BUG DE BOUGER A GAUCHE ----------
+
+A - FIGURES
+
+shapesSetup[i].rotation[1] = ["",
+"0100", 
+"0100", 
+"0100", 
+"0100"]
+
+shapesSetup[i].rotation[2] = ["",
+"0000", 
+"1111", 
+"0000", 
+"0000"]
+
+shapesSetup[i].rotation[3] = ["",
+"0010",
+ "0010",
+ "0010",
+ "0010"]
+	
+shapesSetup[i].rotation[4] = ["",
+"0000", 
+"0000", 
+"1111", 
+"0000"]
+				
+
+			
+case 2
+// ======= Figure O =========
+shapesSetup[i].rotation[1] = ["",
+"0000", 
+"0220",
+"0220",
+"0000"]
+
+shapesSetup[i].rotation[2] = ["",
+"0000", 
+"0220", 
+"0220", 
+"0000"]
+
+shapesSetup[i].rotation[3] = ["",
+"0000", 
+"0220", 
+"0220", 
+"0000"]		
+	
+shapesSetup[i].rotation[4] = ["",
+"0000", 
+"0220", 
+"0220", 
+"0000"]
+				
+
+			
+case 3
+// ======= Figure L =========
+shapesSetup[i].rotation[1] = ["",
+"3300", 
+"0300", 
+"0300", 
+"0000"]
+
+shapesSetup[i].rotation[2] = ["",
+"0030", 
+"3330", 
+"0000", 
+"0000"]
+
+shapesSetup[i].rotation[3] = ["",
+"0300", 
+"0300", 
+"0330", 
+"0000"]
+
+shapesSetup[i].rotation[4] = ["",
+"0000", 
+"3330", 
+"3000", 
+"0000"]
+				
+							
+case 4
+// ======= Figure J =========
+shapesSetup[i].rotation[1] = ["",
+"0440", 
+"0400", 
+"0400", 
+"0000"]
+
+shapesSetup[i].rotation[2] = ["",
+"0000", 
+"4440", 
+"0040", 
+"0000"]
+
+shapesSetup[i].rotation[3] = ["",
+"0400", 
+"0400", 
+"4400", 
+"0000"]	
+	
+shapesSetup[i].rotation[4] = ["",
+"4000", 
+"4440", 
+"0000", 
+"0000"]
+		
+			endcase
+								
+case 5
+// ======= Figure T =========
+shapesSetup[i].rotation[1] = ["",
+"0500", 
+"5550", 
+"0000", 
+"0000"]
+
+shapesSetup[i].rotation[2] = ["",
+"0500", 
+"0550", 
+"0500", 
+"0000"]
+
+shapesSetup[i].rotation[3] = ["",
+"0000", 
+"5550", 
+"0500", 
+"0000"]
+
+shapesSetup[i].rotation[4] = ["",
+"0500", 
+"5500", 
+"0500", 
+"0000"]
+				
+			endcase
+								
+case 6
+// ======= Figure Z =========
+shapesSetup[i].rotation[1] = ["",
+"0600", 
+"6600", 
+"6000", 
+"0000"]
+
+shapesSetup[i].rotation[2] = ["",
+"6600", 
+"0660", 
+"0000", 
+"0000"]
+
+shapesSetup[i].rotation[3] = ["",
+"0060", 
+"0660", 
+"0600", 
+"0000"]
+
+shapesSetup[i].rotation[4] = ["",
+"0000", 
+"6600", 
+"0660", 
+"0000"]
+				
+			endcase
+			
+case 7
+// ======= Figure S =========	
+shapesSetup[i].rotation[1] = ["",
+"0700", 
+"0770", 
+"0070", 
+"0000"]
+
+shapesSetup[i].rotation[2] = ["",
+"0770",
+"7700", 
+"0000", 
+"0000"]
+
+shapesSetup[i].rotation[3] = ["",
+"0700", 
+"0770", 
+"0070", 
+"0000"]
+
+shapesSetup[i].rotation[4] = ["",
+"0000", 
+"0770", 
+"7700", 
+"0000"]
+				
