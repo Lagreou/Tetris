@@ -24,7 +24,7 @@ type tetrisGame
 
 	dataGrid as dataGridGame // Grille de jeu
 
-	blocksPicture as graphicGrid // Tableau contenant les blocs du jeu
+	blocksPicture as blocksGraphics // Tableau contenant les blocs du jeu
 
 	shapeClear as integer // Permet de savoir si il faut effacer la figure dans la grille
 						  // (Après un mouvement ou lors d'un changement de figure)

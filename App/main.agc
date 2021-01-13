@@ -6,38 +6,23 @@
 
 #include "tetrisShape.agc"
 #include "gridGame.agc"
-#include "graphicGrid.agc"
+#include "blocksGraphics.agc"
 #include "checkingShape.agc"
 #include "linesManagement.agc"
 #include "setup.agc"
 #include "input.agc"
 #include "game.agc"
+#include "gameGraphics.agc"
+#include "downloadDisplayGraphics.agc"
+#include "menuGraphics.agc"
 
 // Obligation de définir les types de variable
 #option_explicit
 
 // ============== INSTRUCTIONS PRINCIPALES =============== //
 
-// ============ INITIALISATION DE L'ECRAN DE JEU (TAILLE) ============= //
-
-// show all errors
-SetErrorMode(2)
-
-// set window properties
-SetWindowTitle( "TetrisLike" )
-
-// On récupère les coordonnées de l'écran
-initScreen()
-
-// On définit la taille de l'écran
-SetWindowSize(xScreen, yScreen, 1)
-
-// set display properties
-SetDisplayAspect(xScreen/yScreen)
-SetOrientationAllowed( 1, 1, 1, 1 ) // allow both portrait and landscape on mobile devices
-SetSyncRate( 30, 0 ) // 30fps instead of 60 to save battery
-SetScissor( 0,0,0,0 ) // use the maximum available screen space, no black borders
-UseNewDefaultFonts( 1 ) // since version 2.0.22 we can use nicer default fonts
+// ============ INITIALISATION DE L'ECRAN (contenu dans le setup) ============= //
+initDisplay()
 
 // ============ DECLARATION DE LA VARIABLE DE JEU + INITIALISATION ============
 game as TetrisGame
@@ -49,8 +34,10 @@ isAccueilCharged as integer = 0
 // (ecran de jeu chargé)
 isGameCharged as integer = 0
 
+// Nombre de secondes dans le jeu
 secondsInGame as integer
 
+// Voit si on peux bouger une figure
 moveOk as integer = 0
 
 // =============== INSTRUCTIONS POUR LE JEU ============== //
@@ -169,6 +156,79 @@ loop
 
 // ============== FONCTIONS ================ //
 
+// Initialisation du jeu
+function initialiserJeu(game ref as TetrisGame)
+	// Ecran de chargement pour le jeu
+	// Effacement de l'écran d'accueil
+	afficherChargement()
+	
+	game.level = 1
+	
+	game.changeShape = 0
+	
+	// Initialisation des figures
+	game.shapes = setupShapes()
+	
+	// Choisir une figure au hasard
+	game.currentShape = game.shapes[Random(1,7)]
+
+	// On choisit la prochaine figure
+	game.nextShape = game.shapes[Random(1,7)]
+
+	game.blocksPicture = initImages()
+	
+	// On initialise la taille des blocs
+	initBlocDisplay()
+	
+	game.dataGrid = dataGridGameSetup(game)
+
+	game.xOffset = ((xScreen - GRID_X * tailleBlock) / 2)*100/xScreen
+
+	game.yOffset = (yScreen - GRID_Y * tailleBlock)*100/yScreen
+	
+	afficherArrierePlanJeu()
+	
+	// On créer les colonnes gauche / droite et la ligne du fond
+	createBlockSprites(game.blocksPicture)
+	
+	// On efface l'écran de chargement
+	effacerEcranChargement()
+	
+	// On nettoie la grille
+	clearGrid(game.dataGrid)	
+endfunction
+
+
+// Réinitialisation des paramètres du jeu
+function reinitGame(game ref as TetrisGame)
+	game.dataGrid.moveShapeX = 4
+	game.dataGrid.moveShapeY = 1
+	game.currentShape.moveShapeRotation = 1
+							
+	// On à plus à effacer la figure
+	game.shapeClear = 0
+	game.changeShape = 0
+							
+	// La prochaine figure devient l'actuelle et on
+	// choisi la prochaine à l'avance
+	game.currentShape = game.nextShape
+	game.nextShape = game.shapes[Random(1,7)]
+							
+	// Réinitialisation de la boucle de controle
+	// de vitesse (on réentame un cycle de 25 boucle
+	// sinon la vitesse de la figure sera plus rapide à son apparition)
+	game.speedMove = 25 - ((game.level - 1) * 5)
+endfunction
+
+
+// Affichage du menu de jeu
+function lancerJeu(game ref as TetrisGame)
+	if GetPointerPressed() = 1
+		game.mode = 2
+	endif
+endfunction
+
+
 // Affichage du game over
 function displayGameOver(game ref as TetrisGame)
 	
@@ -195,75 +255,8 @@ function displayGameOver(game ref as TetrisGame)
 	next y
 
 	game.mode = 1
-	clearBlockSprites(game.blocksPicture, GRID_X, GRID_Y)
+	clearBlockSprites(game.blocksPicture)
 	
 	deleteScoreDisplay(game.dataGrid)
 	deleteLevelDisplay(game.dataGrid)
-endfunction
-
-// Affichage du menu de jeu
-function lancerJeu(game ref as TetrisGame)
-	if GetPointerPressed() = 1
-		game.mode = 2
-	endif
-endfunction
-
-// Initialisation du jeu
-function initialiserJeu(game ref as TetrisGame)
-	// Ecran de chargement pour le jeu
-	// Effacement de l'écran d'accueil
-	afficherChargement()
-	
-	game.level = 1
-	
-	game.changeShape = 0
-	
-	// Initialisation des figures
-	game.shapes = setupShapes()
-	
-	// Choisir une figure au hasard
-	game.currentShape = game.shapes[Random(1,7)]
-
-	// On choisit la prochaine figure
-	game.nextShape = game.shapes[Random(1,7)]
-
-	game.blocksPicture = initImages()
-
-	game.dataGrid = dataGridGameSetup(game)
-
-	game.xOffset = ((xScreen - GRID_X * tailleBlock) / 2)*100/xScreen
-
-	game.yOffset = (yScreen - GRID_Y * tailleBlock)*100/yScreen
-	
-	afficherArrierePlanJeu()
-	
-	// On créer les colonnes gauche / droite et la ligne du fond
-	createBlockSprites(game.blocksPicture)
-	
-	// On efface l'écran de chargement
-	effacerEcranChargement()
-	
-	// On nettoie la grille
-	clearGrid(game.dataGrid)	
-endfunction
-
-// Réinitialisation des paramètres du jeu
-function reinitGame(game ref as TetrisGame)
-	game.dataGrid.moveShapeX = 4
-	game.dataGrid.moveShapeY = 1
-	game.currentShape.moveShapeRotation = 1
-							
-	// On à plus à effacer la figure
-	game.shapeClear = 0
-	game.changeShape = 0
-							
-	// La prochaine figure devient l'actuelle et on
-	// choisi la prochaine à l'avance
-	game.currentShape = game.nextShape
-	game.nextShape = game.shapes[Random(1,7)]
-							
-	// Réinitialisation de la boucle de controle
-	// de vitesse (on réentame un cycle de 25 boucle
-	// sinon la vitesse de la figure sera plus rapide à son apparition)
-	game.speedMove = 25 - ((game.level - 1) * 5)
 endfunction

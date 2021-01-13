@@ -2,22 +2,7 @@
 #constant GRID_X = 10
 #constant GRID_Y = 22
 
-#constant SCORE_POSITION_X = 760
-#constant SCORE_POSITION_Y = 26
-
-#constant SCORE_LABEL_X = 760
-#constant SCORE_LABEL_Y = 1
-
-
-#constant LEVEL_POSITION_X = 760
-#constant LEVEL_POSITION_Y = 75
-
-#constant LEVEL_LABEL_X = 760
-#constant LEVEL_LABEL_Y = 50
-
-
 Type dataGridGame	
-	
 	grid as integer[GRID_X, GRID_Y]
 	
 	preMoveShapeX as integer
@@ -173,4 +158,83 @@ function chargingLabels(dataGrid ref as dataGridGame, game as TetrisGame)
 	SetTextPosition(dataGrid.levelDisplay, LEVEL_POSITION_X, LEVEL_POSITION_Y)
 	SetTextColor(dataGrid.levelDisplay, 0,0,0,255)
 	//======================================
+endfunction
+
+// Parcours la grille de nombre et affiche les blocks associés
+function updateGrid(imageGrid as blocksGraphics, game as TetrisGame, 
+					xOffset as integer, yOffset as integer)
+	count as integer = 1
+	image as integer
+	y as integer
+	x as integer
+	xSpace as float
+
+	// Définition de l'espace entre les blocks (espace horizontal) suivant
+	// le format d'écran
+	
+	// ============================================================== //
+	// =============== FORMAT 16/9 ================================== //
+	//============================================================== //           
+	if( xScreen/16  = yScreen/9)
+		xSpace = 2.55
+	endif
+	
+	
+	// ============================================================== //
+	// =============== FORMAT 4/3 ================================== //
+	//============================================================== //   
+	if( xScreen/4  = yScreen/3)
+		xSpace = 3.8
+	endif
+	
+	
+	// ============================================================== //
+	// ==================== INTEGRATION VERSION MOBILE ============== //
+	// ============================================================== //
+	
+	// ============================================================== //
+	// =============== FORMAT 9/19.5 ================================== //
+	//============================================================== //  
+	
+	if( xScreen/9  = yScreen/19.5)
+		xSpace = 9.8
+	endif
+	
+	//
+	// ============== FIN DEFINITION ===============================
+	
+	for y = 0 to GRID_Y - 1
+		for x = 0 to GRID_X - 1
+			SetSpriteVisible(count, 1)
+			
+			if game.dataGrid.grid[x+1, y+1] = 0
+				SetSpriteVisible(count,0)
+			elseif game.dataGrid.grid[x+1, y+1] = 1
+				image = imageGrid.imageArray[0]
+			elseif game.dataGrid.grid[x+1, y+1] = 2
+				image = imageGrid.imageArray[1]
+			elseif game.dataGrid.grid[x+1, y+1] = 3
+				image = imageGrid.imageArray[2]
+			elseif game.dataGrid.grid[x+1, y+1] = 4
+				image = imageGrid.imageArray[3]
+			elseif game.dataGrid.grid[x+1, y+1] = 5
+				image = imageGrid.imageArray[4]
+			elseif game.dataGrid.grid[x+1, y+1] = 6
+				image = imageGrid.imageArray[5]
+			elseif game.dataGrid.grid[x+1, y+1] = 7
+				image = imageGrid.imageArray[6]
+			endif
+			
+			SetSpriteImage(count,image)
+			SetSpriteSize(count, -1, tailleBlocPourcent)
+			SetSpritePosition(count, x*xSpace + xOffset, y*tailleBlocPourcent+yOffset)
+			inc count
+		next x
+	next y
+	
+	// Actualisation du score
+	SetTextString(game.dataGrid.scoreDisplay, Str(game.score))
+	
+	// Actualisation du level
+	SetTextString(game.dataGrid.levelDisplay, Str(game.level))
 endfunction
