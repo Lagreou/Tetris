@@ -2,7 +2,6 @@
 // Descent les lignes au dessus de cette dernière
 // Recherche encore des lignes à descendre
 // Répéter tant que tout n'est pas fini
-
 function effacerLignes(gridY as integer, gridX as integer, game ref as TetrisGame )
 	lineNumb as integer // Nombre de ligne a effacer
 	lines as integer[GRID_Y]
@@ -13,10 +12,15 @@ function effacerLignes(gridY as integer, gridX as integer, game ref as TetrisGam
 	lineNumb = regarderLignes(gridX, game.dataGrid, lines)
 	
 	if lineNumb = 1
+		// On met à jour le score
 		inc game.score, 10 * game.level
 	elseif lineNumb > 1
+		// On met à jour le score mais on multiplie par 2 avec le nombre de ligne
 		inc game.score, lineNumb * 10 * 2 * game.level
 	endif
+	
+	// On met à jour le label
+	scoreLabelUpdate(game.score)
 	
 	yline = gridY - 1
 	Repeat
@@ -29,17 +33,8 @@ function effacerLignes(gridY as integer, gridX as integer, game ref as TetrisGam
 				next xline
 			next movey
 			
-			// On augmente le score
 			playsound(deleteLineSound)
 			
-			//~ if dataGrid.score = 0
-				//~ inc dataGrid.score
-			//~ else
-				//~ dataGrid.score = dataGrid.score*2
-			//~ endif
-			// Ici, on a abaisser les blocks donc on doit reregarder
-			// les blocks a effacée car la première fois qu'on a regarder,
-			// la grille était différente
 			regarderLignes(gridX, game.dataGrid, lines)
 			yline=gridy-1
 		else

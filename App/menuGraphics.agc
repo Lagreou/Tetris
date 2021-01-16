@@ -14,7 +14,7 @@ function afficherAccueil()
 	dechargerMusiqueJeu()
 	
 	// On decharge l'ecran de jeu
-	dechargerSpriteJeu()
+	dechargerSpriteEtImageJeu()
 	
 	// On charge la musique d'accueil
 	chargerMusiqueAccueil()
@@ -41,3 +41,12 @@ function dechargerSpriteAccueil()
 	dechargerImageAccueil()
 endfunction
 
+// Charge l'image d'accueil
+function chargerImageAccueil()
+	imageAccueil = LoadImage("splashScreen2.png")
+endfunction
+
+// Décharge l'image d'accueil
+function dechargerImageAccueil()
+	DeleteImage(imageAccueil)
+endfunction

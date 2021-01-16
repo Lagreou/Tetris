@@ -15,10 +15,6 @@ type tetrisGame
 	
 	mode as integer // Indique si c'est l'écran d'accueil ou le jeu
 
-	// Définit là où la grille apparait à l'écran
-	xOffset as integer
-	yOffset as integer
-
 	currentShape as TetrisShape // Figure en cours
 	nextShape as TetrisShape // Figure après celle en cours
 
@@ -33,11 +29,11 @@ type tetrisGame
 	
 	shapes as TetrisShape[7] // Tableau contenant les figures possibles
 	
-	// Niveau du jeu
-	level as integer
-	
-	// Score du joueur
+	// variable représentant le score
 	score as integer
+	
+	// variable représentant le niveau
+	level as integer
 endtype
 
 function initGameDefault(game ref as TetrisGame)

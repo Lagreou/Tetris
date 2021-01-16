@@ -1,4 +1,3 @@
-
 /*
 Fichier contenant les fonctions permettant de voir si on peux bouger
 la figure dans l'espace de jeu
