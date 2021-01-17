@@ -120,7 +120,7 @@ do
 					// il y'a (directement dans dataGrid)
 					// On récupere également le type de mouvement (1,2,3,4) selon la direction sur laquelle
 					// le joueur a appuyer
-					moveOk = keychecks(game.dataGrid, game.currentShape, game.changeShape)
+					moveOk = keychecks(game.dataGrid, game.currentShape)
 					
 					// On efface la figure si il y'a eu mouvement
 					game.shapeClear = moveMoveShape(game.currentShape, game.dataGrid, game.shapeClear)
@@ -187,7 +187,7 @@ function initialiserJeu(game ref as TetrisGame)
 	// éléments de l'interface (blocs, barres...)
 	initOffset()
 	
-	game.dataGrid = dataGridGameSetup(game)
+	game.dataGrid = dataGridGameSetup()
 	
 	displayGameBackGroundAndMusic()
 	

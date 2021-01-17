@@ -61,13 +61,13 @@ FILE_10=menuGraphics.agc;-1
 FILE_11=downloadDisplayGraphics.agc;-1
 
 [files]
-FILE_NAME_0=0;main.agc;6763;3
+FILE_NAME_0=0;main.agc;4012;3
 FILE_NAME_1=0;tetrisShape.agc;2695;5
-FILE_NAME_2=0;gridGame.agc;2251;0
-FILE_NAME_3=1;checkingShape.agc;0;11
+FILE_NAME_2=0;gridGame.agc;0;0
+FILE_NAME_3=0;checkingShape.agc;380;11
 FILE_NAME_4=0;linesManagement.agc;766;2
 FILE_NAME_5=0;setup.agc;1218;4
-FILE_NAME_6=0;input.agc;519;1
+FILE_NAME_6=1;input.agc;825;1
 FILE_NAME_7=0;game.agc;506;10
 FILE_NAME_8=0;gameGraphics.agc;5197;6
 FILE_NAME_9=0;gameMenu.agc;46;9

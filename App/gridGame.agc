@@ -1,40 +1,73 @@
+//=================================================//
+// ================= DESCRIPTION ================= //
+//=================================================//
+
+//~ Fichier contenant le code permettant de gérer
+//~ la grille au niveau des données.
+//~ Cette grille contient les chiffres représentant
+//~ les blocs
+
+//=================================================//
+
+//=================================================//
+// ================= CONSTANTES ================= //
+//=================================================//
+
 // Définition de l'espace de jeu : 10 colonnes et 22 rangs
 #constant GRID_X = 10
 #constant GRID_Y = 22
 
-Type dataGridGame	
+
+//=================================================//
+// ================= TYPES ======================= //
+//=================================================//
+
+// Type représentant la grille de jeu au niveau des données.
+Type dataGridGame
+	// La grille contenant les chiffres qui représente
+	// les blocs ou leur absence	
 	grid as integer[GRID_X, GRID_Y]
 	
+	// Colonne où se trouvait le premier bloc de la figure
+	// avant un mouvement
 	preMoveShapeX as integer
 	
+	// Ligne où se trouvait le premier bloc de la figure
+	// avant un mouvement
 	preMoveShapeY as integer
 	
-	// Colonne où ce trouve le premier block de la figure
+	// Colonne où ce trouve le premier bloc de la figure
 	moveShapeX as integer
 	
-	// Ligne où ce trouve le premier block de la figure
+	// Ligne où ce trouve le premier bloc de la figure
 	moveShapeY as integer
 endtype
 
-// Initialisation de la dataGrid
-function dataGridGameSetup(game ref as TetrisGame)
+
+//=================================================//
+// ================= FONCTIONS ================= //
+//=================================================//
+
+// Permet d'initialiser la grille de jeu
+function dataGridGameSetup()
 	dataGrid as dataGridGame
 	
 	dataGrid.moveShapeX = 4
 	dataGrid.moveShapeY = 1
-	
-	// Initialisation du score à 0
-	game.score = 0
-	
-	// On charge les labels
-	//~ chargingLabels(dataGrid, game)
 endfunction dataGrid
 
-// Permet de nettoyer la grille
+// Permet de nettoyer la grille (remettre à 0 tous les blocs)
+// et mettre à 1 tous les bloc délimitant l'aire de jeu
 function clearGrid(dataGrid ref as dataGridGame)
 
+// indice x
 x as integer
+
+// indice y
 y as integer
+
+// indice servant à l'initialisation
+// ligne fond + 1ère et dernière colonne
 i as integer
 
 for x = 1 to GRID_X
@@ -42,9 +75,14 @@ for x = 1 to GRID_X
 		dataGrid.grid[x,y] = 0
 	next y
 next x
+
+// On met les blocs à 1 pour la ligne du fond
 for i = 1 to GRID_X
 	dataGrid.grid[i, GRID_Y] = 1
 next i
+
+// On met les blocs à 1 pour la première et dernière
+// colonne
 for i = 1 to GRID_Y
 	dataGrid.grid[1,i] = 1
 	dataGrid.grid[GRID_X,i] = 1
@@ -55,6 +93,8 @@ endfunction
 // Une figure du jeu peut avoir des colonnes de 0, et donc ces dernières
 // "rentrent" dans les autres blocs déja présent. Lorsque c'est le cas,
 // on veux savoir (pour tourner) si les briques font partie d'un meme bloc.
+// dataGrid : grille du jeu
+// currentShape : figure étant en train de tomber.
 function isSameShape(dataGrid as dataGridGame, currentShape as TetrisShape)
 	sameShape as integer = 1
 	i as integer
