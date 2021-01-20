@@ -105,8 +105,6 @@ function checkBelowShape(dataGrid ref as dataGridGame, currentShape as TetrisSha
 	checky3 = currentShape.checks[currentShape.moveShapeRotation, 3]
 	checky4 = currentShape.checks[currentShape.moveShapeRotation, 4]
 	
-	// TODO : changer la condition du and ! c'est sale !
-	
 	// Ici, les différents y représentent les blocks potentiellements "bloquant"
 	// pour les différents points de collision de la figure
 	if checky1 <> 0 and dataGrid.moveShapeY + checky1 <= 22
@@ -309,7 +307,7 @@ function isRightColideAfterMove(shape as tetrisShape, tabCollision as integer[][
 	
 	// On applique la transition dans la grille
 	//("mise à jour position figure dans la grille")
-	moveMoveShape(shape,dataGridFuture,1)
+	movingShape(shape,dataGridFuture,1)
 	
 	// On regarde si colision, auquel cas on retourne 0
 	if isShapeColideOther(shape, dataGridFuture, tabCollision)
@@ -360,7 +358,7 @@ function isLeftColideAfterMove(shape as tetrisShape, tabCollision as integer[][]
 	
 	// On applique la transition dans la grille
 	//("mise à jour position figure dans la grille")
-	moveMoveShape(shape,dataGridFuture,1)
+	movingShape(shape,dataGridFuture,1)
 	
 	// On regarde si colision, auquel cas on retourne 0
 	if isShapeColideOther(shape, dataGridFuture,tabCollision)

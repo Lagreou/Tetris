@@ -23,9 +23,6 @@
 // ============ INITIALISATION DE L'ECRAN (contenu dans le setup) ============= //
 initDisplay()
 
-// ============ DECLARATION DE LA VARIABLE DE JEU + INITIALISATION ============
-game as TetrisGame
-
 // Variable permettant de dire si le menu est chargé
 isAccueilCharged as integer = 0
 
@@ -36,9 +33,6 @@ isGameCharged as integer = 0
 // Nombre de secondes dans le jeu
 secondsInGame as integer
 
-// Voit si on peux bouger une figure
-moveOk as integer = 0
-
 // =============== INSTRUCTIONS POUR LE JEU ============== //
 
 // Initialisation par défaut des paramètres de jeu :
@@ -46,8 +40,7 @@ moveOk as integer = 0
 // mode : 1 (affichage de l'accueil)
 // shapeClear : 0 (pas d'effacement de la figure)
 // changeShape : 0 (pas de changement de figure au départ)
-initGameDefault(game)
-
+initGameDefault()
 
 // Boucle principale du jeu
 do
@@ -56,7 +49,7 @@ do
 	select game.mode
 		case 1 :
 			if isAccueilCharged
-				lancerJeu(game)
+				interceptClickedButton()
 			else
 				afficherAccueil()
 				isAccueilCharged = 1
@@ -72,76 +65,10 @@ do
 					
 			// ============ INSTRUCTIONS EN RAPPORT AVEC LA PARTIE ========== //
 			if isGameCharged
-				if game.changeShape = 1
-					// On regarde si le joueur a dépasser la limite :
-					// GameOver dans ce cas
-					if(game.dataGrid.moveShapeY = 1)
-						displayGameOver(game)
-					// On regarde si des lignes sont à effacées car
-					// la figure a atteint le bas
-					else
-									
-						/* ====== ANCIEN CODE POUR AVOIR UNE "ATTENTE" ======== */
-							// On laisse le temps au joueur de se déplacer une dernière fois
-							// secondsInGame = GetSeconds()
-							//~ repeat
-								//~ moveOk = keychecks(game.dataGrid, game.currentShape, game.changeShape)
-								//~ 
-								//~ if(moveOk = 1)
-									//~ // On efface la figure si il y'a eu mouvement
-									//~ game.shapeClear = moveMoveShape(game.currentShape, game.dataGrid, game.shapeClear)
-									//~ // On actualise les "dessins" sur la grille
-									//~ updateGrid(game.blocksPicture, game, game.xOffset, game.yOffset)
-								//~ endIf
-								//~ sync()							
-							//~ until(GetSeconds() > secondsInGame + 0.05 or moveOk)				
-						/* ========== FIN ===============*/
-											
-						// On regarde si des lignes sont à effacer
-						effacerLignes(GRID_Y, GRID_X, game)
-						
-						// On regarde si la limite du score du niveau est atteinte.
-						// Si oui : on augmente la difficultée
-						if(game.score >= game.scoreLimit[game.level] and game.level <> 6)
-							inc game.level
-							// Mise à jour du label
-							levelLabelUpdate(game.level)
-						endif
-						
-						// On réinitialise les données comme si c'était la première
-						// figure
-						reinitGame(game)
-					endif
-				else				
-					// On regarde si la figure peux aller en bas (si non, on change de figure)
-					game.changeShape = checkBelowShape(game.dataGrid, game.currentShape)
-					
-					// Le joueur presse un bouton ? on récupere la rotation qui en résulte si rotation
-					// il y'a (directement dans dataGrid)
-					// On récupere également le type de mouvement (1,2,3,4) selon la direction sur laquelle
-					// le joueur a appuyer
-					moveOk = keychecks(game.dataGrid, game.currentShape)
-					
-					// On efface la figure si il y'a eu mouvement
-					game.shapeClear = moveMoveShape(game.currentShape, game.dataGrid, game.shapeClear)
-					
-					// vitesse du jeu : speedMove décroit
-					// chaque fois qu'un tour de boucle est fait
-					// En revanche si le joueur a appuyer sur la fleche
-					// du bas, on n'avance pas la pièce		
-					if game.speedMove = 0 and GetRawKeyPressed(40) = 0
-						inc game.dataGrid.moveShapeY
-						game.speedMove = 25 - ((game.level - 1) * 5)
-					endif
-					
-					dec game.speedMove
-					
-					// On actualise les "dessins" sur la grille
-					updateGridBlocks(game.blocksPicture, game)		
-				endif	
+				playingGame()
 			else				
 				// Initialisation de l'écran de jeu
-				initialiserJeu(game)
+				initialiserJeu()
 				
 				// Ici, la partie est en cours de chargement
 				// donc booléen à vrai
@@ -158,7 +85,7 @@ loop
 // ============== FONCTIONS ================ //
 
 // Initialisation du jeu
-function initialiserJeu(game ref as TetrisGame)
+function initialiserJeu()
 	// Ecran de chargement pour le jeu
 	// Effacement de l'écran d'accueil
 	afficherChargement()
@@ -174,15 +101,14 @@ function initialiserJeu(game ref as TetrisGame)
 	
 	// Choisir une figure au hasard
 	game.currentShape = game.shapes[Random(1,7)]
-
+	
 	// On choisit la prochaine figure
 	game.nextShape = game.shapes[Random(1,7)]
-
+	
 	game.blocksPicture = initImages()
-	
 	// On initialise la taille des blocs
-	initBlocSize()
 	
+	initBlocSize()
 	// On initialise le point d'ancrage des 
 	// éléments de l'interface (blocs, barres...)
 	initOffset()
@@ -194,7 +120,7 @@ function initialiserJeu(game ref as TetrisGame)
 	// On créer les colonnes gauche / droite et la ligne du bas
 	createBlockSprites(game.blocksPicture)
 	
-	displayGameInterface(game)
+	displayGameInterface()
 	
 	// On efface l'écran de chargement
 	effacerEcranChargement()
@@ -205,13 +131,13 @@ endfunction
 
 
 // Réinitialisation des paramètres du jeu
-function reinitGame(game ref as TetrisGame)
+function reinitGame()
 	game.dataGrid.moveShapeX = 4
 	game.dataGrid.moveShapeY = 1
 	game.currentShape.moveShapeRotation = 1
 							
 	// On à plus à effacer la figure
-	game.shapeClear = 0
+	game.isShapeMoved = 0
 	game.changeShape = 0
 							
 	// La prochaine figure devient l'actuelle et on
@@ -231,9 +157,123 @@ function reinitGame(game ref as TetrisGame)
 endfunction
 
 
-// Affichage du menu de jeu
-function lancerJeu(game ref as TetrisGame)
-	if GetPointerPressed() = 1
+// Regarde sur quel bouton le joueur appuie
+function interceptClickedButton()
+	if GetVirtualButtonPressed(playButton)
 		game.mode = 2
+	elseif GetVirtualButtonPressed(exitButton)
+		end
+	endif
+endfunction
+
+// Fonction permettant au jeu d'avoir court. Prend en paramètre
+// un objet tetrisGame (contenant les figure, le score, la grille...)
+function playingGame()
+	
+	// Variable permettant de dire si on peux bouger
+	// la figure
+	moveOk as integer = 0
+	
+	// On regarde si la figure peux aller en bas (si non, on change de figure)
+	game.changeShape = checkBelowShape(game.dataGrid, game.currentShape)
+	
+	if game.changeShape = 1
+		updateStatus()
+	else	
+						
+		// Le joueur presse un bouton ? on récupere la rotation qui en résulte si rotation
+		// il y'a (directement dans dataGrid)
+		// On récupere également le type de mouvement (1,2,3,4) selon la direction sur laquelle
+		// le joueur a appuyer
+		moveOk = executeMovementGiveByUser(game.dataGrid, game.currentShape)
+		
+		// On enregistre le dernier mouvement fait par le joueur
+		game.lastMove = moveOk
+		
+		// vitesse du jeu : speedMove décroit
+		// chaque fois qu'un tour de boucle est fait
+		// En revanche si le joueur a appuyer sur la fleche
+		// du bas, on n'avance pas la pièce		
+		if game.speedMove = 0 and game.lastMove <> 4
+			inc game.dataGrid.moveShapeY
+			game.speedMove = 25 - ((game.level - 1) * 5)
+		endif
+		
+		// On efface la figure si il y'a eu mouvement
+		game.isShapeMoved = movingShape(game.currentShape, game.dataGrid, game.isShapeMoved)
+		
+		dec game.speedMove
+		
+		// On actualise les "dessins" sur la grille
+		updateGridBlocks(game.blocksPicture)		
+	endif
+endfunction
+
+// Permet de mettre à jour le jeu lorsque le changement de figure
+// est détecté (soit on continue soit game over)
+
+function updateStatus()
+	
+	// Permet de savoir si la figure peut aller en bas
+	canShapeMoveBottom as integer = 0
+	
+	// Permet de savoir si le joueur a bouger la figure
+	moveOk as integer
+	
+	// Permet de savoir le nombre de miliseconde passées dans le jeu
+	milisecondsInGame as integer
+	
+	// On regarde si le joueur a dépasser la limite :
+	// GameOver dans ce cas
+	if(game.dataGrid.moveShapeY = 1)
+		displayGameOver()
+	// On regarde si des lignes sont à effacées car
+	// la figure a atteint le bas
+	else
+		// On regarde que le dernier mouvement connu est différent de 4
+		// (mouvement vers le bas)
+		if(game.lastMove <> 4)
+			// On laisse le temps au joueur de se déplacer une dernière fois
+			milisecondsInGame = GetMilliseconds()
+			
+			repeat
+				moveOk = executeMovementGiveByUser(game.dataGrid, game.currentShape)
+				
+				if(moveOk <> 0)
+					
+					// On efface la figure si il y'a eu mouvement
+					game.isShapeMoved = movingShape(game.currentShape, game.dataGrid, game.isShapeMoved)
+					
+					// On actualise les "dessins" sur la grille
+					updateGridBlocks(game.blocksPicture)
+					
+					// On réinitialise le timer
+					milisecondsInGame = GetMilliseconds()
+					
+					// Tant que la figure peux descendre, ça continue
+					while(checkBelowShape(game.dataGrid, game.currentShape) = 0)
+						inc game.dataGrid.moveShapeY	
+						sync()
+					endwhile
+				endIf
+				// On synchronise pour que le gif continue de défiler malgrès l'attente
+				sync()					
+			until(GetMilliseconds() > milisecondsInGame + 500 or moveOk)
+		endif		
+							
+		// On regarde si des lignes sont à effacer
+		effacerLignes()
+		
+		// On regarde si la limite du score du niveau est atteinte.
+		// Si oui : on augmente la difficultée
+		if(game.score >= game.scoreLimit[game.level] and game.level <> 6)
+			inc game.level
+			// Mise à jour du label
+			levelLabelUpdate(game.level)
+		endif
+		
+		// On réinitialise les données comme si c'était la première
+		// figure
+		reinitGame()
 	endif
 endfunction

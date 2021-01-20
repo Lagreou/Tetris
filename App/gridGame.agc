@@ -23,7 +23,7 @@
 //=================================================//
 
 // Type représentant la grille de jeu au niveau des données.
-Type dataGridGame
+Type DataGridGame
 	// La grille contenant les chiffres qui représente
 	// les blocs ou leur absence	
 	grid as integer[GRID_X, GRID_Y]

@@ -11,14 +11,15 @@
 // Fonction permettant de voir si un mouvement est autorisé
 // dataGrid : grille où le jeu ce déroule
 // shape : figure actuellement en train de tombée
-function keychecks(dataGrid ref as dataGridGame, shape ref as TetrisShape)
+function executeMovementGiveByUser(dataGrid ref as DataGridGame, shape ref as TetrisShape)
 	
+	// Permet de savoir si un mouvement a été effectué.
+	// 0 : pas de mouvement
+	// 1 : droite
+	// 2 : gauche
+	// 3 : rotation
+	// 4 : bas
 	moveOk as integer = 0
-	
-	leftOk as integer
-	
-	// Permet de savoir si il faut changer
-	changeShape as integer
 	
 	// Fleche de droite
 	if GetRawKeyPressed(39) and isRightOk(shape, dataGrid) = 1
@@ -43,15 +44,43 @@ function keychecks(dataGrid ref as dataGridGame, shape ref as TetrisShape)
 	
 endfunction moveOk
 
+
 // Permet de définir la position des différents blocks dans la grille de jeu
 // et de savoir si on doit effacer la figure à l'ancienne position
-function moveMoveShape(shape ref as TetrisShape, dataGrid ref as dataGridGame, shapeClear as integer)
+function movingShape(shape ref as TetrisShape, dataGrid ref as DataGridGame, shapeClear as integer)
 	
+	// Indice de parcours des lignes
 	i as integer
+	
+	// Cellule de la figure en train d'être parcouru
 	cell as integer
+	
+	// Ligne en cours d'introspection
 	shapeLine as String
 	
 	// On regarde l'ancienne position des blocs afin de passe à 0
+	updateOldPosition(dataGrid, shape, shapeClear)
+	
+	// On dessine la figure dans à la nouvelle position
+	updateNewPosition(dataGrid, shape)
+	
+	shapeClear =1 : dataGrid.preMoveShapeX = dataGrid.moveShapeX : dataGrid.preMoveShapeY = dataGrid.moveShapeY : shape.preMoveShapeRotation = shape.moveShapeRotation : shape.preShape = shape.shapeNumb
+endfunction	shapeClear
+
+
+// Remet à 0 les cases où la figure était avant le
+// mouvement
+function updateOldPosition(dataGrid ref as DataGridGame, shape as TetrisShape, shapeClear as integer)
+	// Indice de parcours des lignes
+	i as integer
+	
+	// Cellule de la figure en train d'être parcouru
+	cell as integer
+	
+	// Ligne en cours d'introspection
+	shapeLine as String
+	
+	// On vérifie qu'on doive bien effacer l'ancienne position
 	if shapeClear = 1
 		for i = 1 to 4
 			
@@ -77,8 +106,22 @@ function moveMoveShape(shape ref as TetrisShape, dataGrid ref as dataGridGame, s
 			endif
 		next i
 	endif
+endfunction
+
+
+// Permet de dessiner la figure dans la nouvelle position
+// dans la grille
+function updateNewPosition(dataGrid ref as DataGridGame, shape as TetrisShape)
 	
-	// On dessine la figure dans à la nouvelle position
+	// Indice de parcours des lignes
+	i as integer
+	
+	// Cellule de la figure en train d'être parcouru
+	cell as integer
+	
+	// Ligne en cours d'introspection
+	shapeLine as String
+	
 	for i = 1 to 4
 		shapeLine = shape.rotation[shape.moveShapeRotation, i]
 		
@@ -103,24 +146,27 @@ function moveMoveShape(shape ref as TetrisShape, dataGrid ref as dataGridGame, s
 		endif	
 	next i
 	
-	
-	shapeClear =1 : dataGrid.preMoveShapeX = dataGrid.moveShapeX : dataGrid.preMoveShapeY = dataGrid.moveShapeY : shape.preMoveShapeRotation = shape.moveShapeRotation : shape.preShape = shape.shapeNumb
-endfunction	shapeClear
+endfunction
 
-// 
-function executeLeftMove(dataGrid ref as dataGridGame)
+
+// Bouge la figure à gauche et retourne 2
+function executeLeftMove(dataGrid ref as DataGridGame)
 	moveOk as integer
 	dec dataGrid.moveShapeX
 	moveOk = 2
 endfunction moveOk
 
-function executeRightMove(dataGrid ref as dataGridGame)
+
+// Bouge la figure à droite et retourne 2
+function executeRightMove(dataGrid ref as DataGridGame)
 	moveOk as integer
 	inc dataGrid.moveShapeX
 	moveOk = 1
 endfunction moveOk
 
-function executeBottomMove(dataGrid ref as dataGridGame, shape ref as tetrisShape)
+
+// Bouge la figure vers le bas et retourne 4
+function executeBottomMove(dataGrid ref as DataGridGame, shape ref as TetrisShape)
 	moveOk as integer
 	changeShape as integer = 0
 	if changeshape = 0
@@ -132,7 +178,9 @@ function executeBottomMove(dataGrid ref as dataGridGame, shape ref as tetrisShap
 		moveOk = 4
 endfunction moveOk
 
-function executeRotationMove(dataGrid ref as dataGridGame, shape ref as tetrisShape)
+
+// Fait faire une rotation à la figure
+function executeRotationMove(dataGrid ref as DataGridGame, shape ref as TetrisShape)
 	
 	moveOk as integer
 	move as integer 

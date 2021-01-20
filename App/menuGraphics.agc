@@ -5,6 +5,12 @@
 // Contient le sprite d'accueil
 global spriteAccueil  as integer 
 
+global playButton as integer = 1
+
+global optionsButton as integer = 2
+
+global exitButton as integer = 3
+
 // Affiche l'écran d'accueil et démarre la musique
 // d'écran d'accueil
 function afficherAccueil()
@@ -21,6 +27,9 @@ function afficherAccueil()
 	
 	// On charge l'écran d'accueil
 	chargerSpriteAccueil()
+	
+	// On charge les boutons de l'accueil
+	positionnerBoutons()
 endfunction
 
 function chargerSpriteAccueil()
@@ -36,17 +45,50 @@ function chargerSpriteAccueil()
 	SetSpriteSize(spriteAccueil,100,-1)
 endfunction
 
-function dechargerSpriteAccueil()
+function positionnerBoutons()
+	imageOptionButton = LoadImage("OptionsButton.png")
+	imageExitButton = LoadImage("ExitButton.png")
+	imagePlayButton = LoadImage("StartPlayingButton.png")
+	
+	AddVirtualButton(playButton,49,60,5)
+	SetVirtualButtonSize(playButton, pixelToPercentWidth(GetImageWidth(imagePlayButton)),-1)
+	SetVirtualButtonImageUp(playButton, imagePlayButton)
+	SetVirtualButtonImageDown(playButton, imagePlayButton)
+	
+	AddVirtualButton(optionsButton,49,70,5)
+	SetVirtualButtonSize(optionsButton, pixelToPercentWidth(GetImageWidth(imageOptionButton)),-1)
+	SetVirtualButtonImageUp(optionsButton, imageOptionButton)
+	SetVirtualButtonImageDown(optionsButton, imageOptionButton)
+	
+	AddVirtualButton(exitButton,49,80,5)
+	SetVirtualButtonSize(exitButton, pixelToPercentWidth(GetImageWidth(imageExitButton)),-1)
+	SetVirtualButtonImageUp(exitButton, imageExitButton)
+	SetVirtualButtonImageDown(exitButton, imageExitButton)
+endfunction
+
+function dechargerButtons()
+	DeleteImage(imageOptionButton)
+	DeleteImage(imageExitButton)
+	DeleteImage(imagePlayButton )
+	
+	DeleteVirtualButton(playButton)
+	DeleteVirtualButton(optionsButton)
+	DeleteVirtualButton(exitButton)
+endfunction
+
+function dechargerSpritesAccueil()
 	DeleteSprite(spriteAccueil)
-	dechargerImageAccueil()
+	DeleteImage(imageAccueil)
+	
+	DeleteImage(imagePlayButton)
+	DeleteImage(imageOptionButton)
+	DeleteImage(imageExitButton)
+	
+	// On supprime les boutons
+	dechargerButtons()
 endfunction
 
 // Charge l'image d'accueil
 function chargerImageAccueil()
 	imageAccueil = LoadImage("splashScreen2.png")
-endfunction
-
-// Décharge l'image d'accueil
-function dechargerImageAccueil()
-	DeleteImage(imageAccueil)
 endfunction

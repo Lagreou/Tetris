@@ -59,20 +59,24 @@ FILE_8=gameGraphics.agc;-1
 FILE_9=gameMenu.agc;-1
 FILE_10=menuGraphics.agc;-1
 FILE_11=downloadDisplayGraphics.agc;-1
+FILE_12=optionsGraphics.agc;-1
+FILE_13=optionInputs.agc;-1
 
 [files]
-FILE_NAME_0=0;main.agc;4012;3
-FILE_NAME_1=0;tetrisShape.agc;2695;5
-FILE_NAME_2=0;gridGame.agc;0;0
-FILE_NAME_3=0;checkingShape.agc;380;11
-FILE_NAME_4=0;linesManagement.agc;766;2
-FILE_NAME_5=0;setup.agc;1218;4
-FILE_NAME_6=1;input.agc;825;1
-FILE_NAME_7=0;game.agc;506;10
-FILE_NAME_8=0;gameGraphics.agc;5197;6
-FILE_NAME_9=0;gameMenu.agc;46;9
-FILE_NAME_10=0;menuGraphics.agc;505;7
-FILE_NAME_11=0;downloadDisplayGraphics.agc;553;8
+FILE_NAME_0=0;main.agc;6862;3
+FILE_NAME_1=0;tetrisShape.agc;5671;5
+FILE_NAME_2=0;gridGame.agc;900;0
+FILE_NAME_3=0;checkingShape.agc;3018;11
+FILE_NAME_4=0;linesManagement.agc;1455;2
+FILE_NAME_5=0;setup.agc;4434;4
+FILE_NAME_6=0;input.agc;4726;1
+FILE_NAME_7=0;game.agc;1172;10
+FILE_NAME_8=0;gameGraphics.agc;2751;6
+FILE_NAME_9=0;gameMenu.agc;99;9
+FILE_NAME_10=0;menuGraphics.agc;2369;7
+FILE_NAME_11=0;downloadDisplayGraphics.agc;631;8
+FILE_NAME_12=0;optionsGraphics.agc;0;12
+FILE_NAME_13=1;optionInputs.agc;0;13
 
 [project]
 description=

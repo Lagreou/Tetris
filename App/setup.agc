@@ -16,22 +16,14 @@ global imageAccueil as integer
 // Image arrière jeu
 global imageBackground as integer
 
-// image des barres limites gauches et droite de
-// l'aire de jeu
-global imageleftAndRightBar as integer
+// représente l'image de chargement
+global imageLoading as integer
 
-// image des barres limites haut et bas de
-// l'aire de jeu
-global imagetopAndBottomBar as integer
+global imageOptionButton as integer
 
-// image du cadre des scores
-global imageScore as integer
+global imagePlayButton as integer
 
-// image du cadre des niveaux
-global imageCurrentLevel as integer
-
-// image du cadre de la prochaineFigure
-global imageNextFigure as integer
+global imageExitButton as integer
 
 // ============== IMAGE DES DIFFERENTES FIGURES DANS LE CADRE NEXT =======//
 //=========================================================================
@@ -71,7 +63,7 @@ xScreen = GetMaxDeviceWidth()
 
 
 // On définit la taille de l'écran
-SetWindowSize(xScreen, yScreen, 0)
+SetWindowSize(xScreen, yScreen, 1)
 
 // set display properties
 SetDisplayAspect(xScreen/yScreen)
@@ -127,13 +119,13 @@ endfunction
 function chargerMusiqueAccueil()
 	// Chargement de la musique d'accueil
 	mainSound = LoadSoundOGG("Jaunter-Reset.ogg")
-	playSound(mainSound,50,1)
+	//~ playSound(mainSound,50,1)
 endfunction
 
 function chargerMusiqueJeu()
 	// Chargement de la musique du jeu
 	gameSound = LoadSoundOGG("Kubbi-Ember-04Cascade.ogg")
-	playSound(gameSound,50,1)
+	//~ playSound(gameSound,50,1)
 	
 	// Chargement des sons pour le jeu
 	deleteLineSound = LoadSound("line.wav")

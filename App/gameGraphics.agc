@@ -26,7 +26,27 @@ endtype
 
 // ===============================================
 // ================= VARIABLES GLOBALES ==========
+// ===== (mais simplement utilisées dans =========
+// ===== les fonctions de ce fichier) ============
 //================================================
+
+// image des barres limites gauches et droite de
+// l'aire de jeu
+global imageleftAndRightBar as integer
+
+// image des barres limites haut et bas de
+// l'aire de jeu
+global imagetopAndBottomBar as integer
+
+// image du cadre des scores
+global imageScore as integer
+
+// image du cadre des niveaux
+global imageCurrentLevel as integer
+
+// image du cadre de la prochaineFigure
+global imageNextFigure as integer
+
 
 // Définit là où la grille apparait à l'écran
 global xOffset as integer
@@ -87,19 +107,16 @@ endfunction
 // ======== GESTION SPRITES INTERFACE ====
 // ==================================== //
 function displayGameBackGround()
-	largeurFenetre as integer
-	
 	imageBackground = LoadImage("background2.gif")
 	spriteBackground = CreateSprite(imageBackground)
-	
-	// Obtention de la taille du sprite
-	largeurFenetre = GetSpriteWidth(spriteBackground)
-	
+		
 	// Le -1 sert à garder l'échelle d'origine par rapport à la largeur
-	SetSpriteSize(spriteBackground,100,-1)
+	SetSpriteSize(spriteBackground,-1,100)
+	
+	SetSpritePosition(spriteBackground, 15, 0)
 endfunction
 
-function displayGameInterface(game as tetrisGame)
+function displayGameInterface()
 	
 	chargingGameInterface()
 	placedBars()
@@ -331,7 +348,7 @@ function clearBlockSprites(tabImage ref as blocksGraphics)
 endfunction
 
 // Parcours la grille de nombre et affiche les blocks associés
-function updateGridBlocks(imageGrid as blocksGraphics, game as TetrisGame)
+function updateGridBlocks(imageGrid as blocksGraphics)
 	count as integer = 1
 	image as integer
 	y as integer
@@ -375,11 +392,6 @@ function updateGridBlocks(imageGrid as blocksGraphics, game as TetrisGame)
 		next x
 	next y
 	
-	//~ // Actualisation du score
-	//~ SetTextString(game.dataGrid.scoreDisplay, Str(game.score))
-	//~ 
-	//~ // Actualisation du level
-	//~ SetTextString(game.dataGrid.levelDisplay, Str(game.level))
 endfunction
 
 // Permet d'initialiser les coordonnées d'affichage des blocs,
@@ -390,7 +402,7 @@ function initOffset()
 endfunction
 
 // Affichage du game over
-function displayGameOver(game ref as TetrisGame)
+function displayGameOver()
 	
 	SetPhysicsWallBottom(0)
 	SetPhysicsWallLeft(0)
