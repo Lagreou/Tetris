@@ -14,6 +14,8 @@
 #include "gameGraphics.agc"
 #include "downloadDisplayGraphics.agc"
 #include "menuGraphics.agc"
+#include "gameMenu.agc"
+#include "optionsGraphics.agc"
 
 // Obligation de définir les types de variable
 #option_explicit
@@ -51,7 +53,7 @@ do
 			if isAccueilCharged
 				interceptClickedButton()
 			else
-				afficherAccueil()
+				goToAccueilFromGame()
 				isAccueilCharged = 1
 				isGameCharged = 0
 			endif
@@ -105,21 +107,20 @@ function initialiserJeu()
 	// On choisit la prochaine figure
 	game.nextShape = game.shapes[Random(1,7)]
 	
-	game.blocksPicture = initImages()
-	// On initialise la taille des blocs
+	// Initialisation des images qu'on utilise
+	// pour les blocs
+	blocksPicture = initImages()
 	
+	// On initialise la taille des blocs
 	initBlocSize()
+	
 	// On initialise le point d'ancrage des 
 	// éléments de l'interface (blocs, barres...)
 	initOffset()
 	
 	game.dataGrid = dataGridGameSetup()
 	
-	displayGameBackGroundAndMusic()
-	
-	// On créer les colonnes gauche / droite et la ligne du bas
-	createBlockSprites(game.blocksPicture)
-	
+	// On affiche l'interface du jeu
 	displayGameInterface()
 	
 	// On efface l'écran de chargement
@@ -128,7 +129,6 @@ function initialiserJeu()
 	// On nettoie la grille
 	clearGrid(game.dataGrid)	
 endfunction
-
 
 // Réinitialisation des paramètres du jeu
 function reinitGame()
@@ -147,23 +147,13 @@ function reinitGame()
 	game.nextShape = game.shapes[Random(1,7)]
 	
 	// On met à jour coté graphique
-	UnchargingNextFigureSprite()
-	ChargingAndPlaceNextFigureSprite(game.nextShape)
+	unchargingNextFigureSprite()
+	chargingAndPlaceNextFigureSprite()
 							
 	// Réinitialisation de la boucle de controle
 	// de vitesse (on réentame un cycle de 25 boucle
 	// sinon la vitesse de la figure sera plus rapide à son apparition)
 	game.speedMove = 25 - ((game.level - 1) * 5)
-endfunction
-
-
-// Regarde sur quel bouton le joueur appuie
-function interceptClickedButton()
-	if GetVirtualButtonPressed(playButton)
-		game.mode = 2
-	elseif GetVirtualButtonPressed(exitButton)
-		end
-	endif
 endfunction
 
 // Fonction permettant au jeu d'avoir court. Prend en paramètre
@@ -205,13 +195,12 @@ function playingGame()
 		dec game.speedMove
 		
 		// On actualise les "dessins" sur la grille
-		updateGridBlocks(game.blocksPicture)		
+		updateGridBlocks()		
 	endif
 endfunction
 
 // Permet de mettre à jour le jeu lorsque le changement de figure
 // est détecté (soit on continue soit game over)
-
 function updateStatus()
 	
 	// Permet de savoir si la figure peut aller en bas
@@ -245,7 +234,7 @@ function updateStatus()
 					game.isShapeMoved = movingShape(game.currentShape, game.dataGrid, game.isShapeMoved)
 					
 					// On actualise les "dessins" sur la grille
-					updateGridBlocks(game.blocksPicture)
+					updateGridBlocks()
 					
 					// On réinitialise le timer
 					milisecondsInGame = GetMilliseconds()
@@ -276,4 +265,15 @@ function updateStatus()
 		// figure
 		reinitGame()
 	endif
+endfunction
+
+function goToAccueilFromGame()
+	// On decharge la musique de jeu (car on peux passer
+	// directement du jeu au menu
+	dechargerMusiqueJeu()
+	
+	// On decharge l'ecran de jeu
+	dechargerSpriteEtImageJeu()
+	
+	afficherAccueil()
 endfunction

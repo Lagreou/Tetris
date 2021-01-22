@@ -127,7 +127,7 @@ function checkBelowShape(dataGrid ref as dataGridGame, currentShape as TetrisSha
 endFunction changeShape
 
 
-// Permet de déterminer la direction pour bouger la figure si colision
+// Permet de déterminer la direction pour bouger la figure si collision
 // - nbcases pour la gauche, 0 pour pas changer de place et nbCases pour aller à droite
 // - 10 pour ne pas que ça bouge
 function determinateDirection(shape as tetrisShape, dataGrid as dataGridGame)
@@ -160,9 +160,7 @@ function determinateDirection(shape as tetrisShape, dataGrid as dataGridGame)
 				// On regarde si tabCollision = vrai à l'indice donné et si la case lui correspondant dans la grille de jeu
 				// est déja prise par un bloc
 				if(tabCollision[ligne,colonne] = 1 and dataGrid.grid[dataGrid.moveShapeX + colonne - 1, dataGrid.moveShapeY + ligne - 1] <> 0)
-					trouver = 1
-				else
-					
+					trouver = 1				
 				endif
 				if(trouver = 0)	
 					inc colonne

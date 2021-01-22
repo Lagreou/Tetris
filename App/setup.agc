@@ -10,25 +10,8 @@
 // ============== FICHIERS GRAPHIQUES (IMAGES) =================//
 //============================================================= //
 
-// image arrière accueil
-global imageAccueil as integer
-
-// Image arrière jeu
-global imageBackground as integer
-
 // représente l'image de chargement
 global imageLoading as integer
-
-global imageOptionButton as integer
-
-global imagePlayButton as integer
-
-global imageExitButton as integer
-
-// ============== IMAGE DES DIFFERENTES FIGURES DANS LE CADRE NEXT =======//
-//=========================================================================
-
-global tabImageNextFigure as integer[7]
 
 // ============== FICHIERS SONS (MUSIQUES, BRUITAGES...) =================//
 //====================================================================== //
@@ -42,6 +25,7 @@ global deleteLineSound as integer
 global xScreen as float
 global yScreen as float
 global xSpace as float
+global deviceRunOn as string
 
 // =================================================================== //
 // ================ FIN VARIABLES GLOBALES ========================== //
@@ -61,7 +45,6 @@ SetWindowTitle( "Falling Blocks" )
 yScreen = GetMaxDeviceHeight()
 xScreen = GetMaxDeviceWidth()
 
-
 // On définit la taille de l'écran
 SetWindowSize(xScreen, yScreen, 1)
 
@@ -72,6 +55,7 @@ SetSyncRate( 60, 0 )
 SetScissor( 0,0,0,0 ) // use the maximum available screen space, no black borders
 UseNewDefaultFonts( 1 ) // since version 2.0.22 we can use nicer default fonts
 
+// On regarde sur quel machine on execute
 initXSpace()
 
 endfunction
@@ -144,25 +128,33 @@ endfunction
 /* =================================================
 					FONCTIONS GENERALES
 ===================================================*/
+
+// Permet de passer d'un système de % vers px pour
+// la largeur de l'écran
 function percentToPixelWidth(percent as float)
 	width as float
 	width = GetDeviceWidth() / 100.0 * percent
 	
 endfunction width
 
+// Permet de passer d'un système de % vers px pour
+// la hauteur de l'écran
 function percentToPixelHeight(percent as float)
 	height as float	
 	height = GetDeviceHeight() / 100.0 * percent
 	
 endfunction height
 
-
+// Permet de passer d'un système de px vers % pour
+// la largeur de l'écran
 function pixelToPercentWidth(pixel as float)
 	width as float
 	width = 100.0 / GetDeviceWidth() * pixel
 	
 endfunction width
 
+// Permet de passer d'un système de px vers % pour
+// la hauteur de l'écran
 function pixelToPercentHeight(pixel as float)
 	height as float
 	height = 100.0 / GetDeviceHeight() * pixel

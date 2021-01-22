@@ -19,80 +19,107 @@
 // ===============================================
 // ================= TYPES =======================
 //================================================
-Type blocksGraphics
+Type BlocksGraphics
 	imageArray as integer[IMAGES_COLOR]
 endtype
 
+type GraphicsElementGameInterface
+	
+	// image des differentes figures dans le cadre next
+	tabImageNextFigure as integer[7]
+	
+	// Image arrière jeu
+	imageBackground as integer
+	
+	// image des barres limites gauches et droite de
+	// l'aire de jeu
+	imageleftAndRightBar as integer
+
+	// image des barres limites haut et bas de
+	// l'aire de jeu
+	imagetopAndBottomBar as integer
+
+	// image du cadre des scores
+	frameScoreImage as integer
+
+	// image du cadre des niveaux
+	frameCurrentLevelImage as integer
+
+	// image du cadre de la prochaineFigure
+	frameNextFigureImage as integer
+
+	// Définit là où la grille apparait à l'écran
+	xOffset as integer
+	yOffset as integer
+
+	// Taille des blocks tetris, à adapter selon l'affichage
+	tailleBlock as float // => en px
+	tailleBlocPourcent as float // => en %
+
+	// sprite du background du jeu
+	spriteBackground as integer
+
+	// sprite barre gauche
+	spriteLeftBar as integer
+
+	// sprite barre droite
+	spriteRightBar as integer
+
+	// sprite barre haut
+	spriteTopBar as integer
+
+	// sprite barre bas
+	spriteBottomBar as integer
+
+	// sprite du cadre des scores
+	spriteFrameScore as integer
+
+	// sprite du cadre des niveaux
+	spriteFrameCurrentLevel as integer
+
+	// sprite du cadre de la prochaineFigure
+	spriteFrameNextFigure as integer
+
+	// Label représentant le Score
+	scoreLabel as integer
+
+	// Label représentant le niveau du jeu
+	levelLabel as integer
+
+	nextFigureSprite as integer
+endtype
 
 // ===============================================
 // ================= VARIABLES GLOBALES ==========
-// ===== (mais simplement utilisées dans =========
-// ===== les fonctions de ce fichier) ============
 //================================================
 
-// image des barres limites gauches et droite de
-// l'aire de jeu
-global imageleftAndRightBar as integer
+// Tableau contenant les blocs du jeu	
+global blocksPicture as blocksGraphics
 
-// image des barres limites haut et bas de
-// l'aire de jeu
-global imagetopAndBottomBar as integer
-
-// image du cadre des scores
-global imageScore as integer
-
-// image du cadre des niveaux
-global imageCurrentLevel as integer
-
-// image du cadre de la prochaineFigure
-global imageNextFigure as integer
-
-
-// Définit là où la grille apparait à l'écran
-global xOffset as integer
-global yOffset as integer
-
-// Taille des blocks tetris, à adapter selon l'affichage
-global tailleBlock as float // => en px
-global tailleBlocPourcent as float // => en %
-
-// sprite du background du jeu
-global spriteBackground as integer
-
-// sprite barre gauche
-global spriteLeftBar as integer
-
-// sprite barre droite
-global spriteRightBar as integer
-
-// sprite barre haut
-global spriteTopBar as integer
-
-// sprite barre bas
-global spriteBottomBar as integer
-
-// sprite du cadre des scores
-global SpriteFrameScore as integer
-
-// sprite du cadre des niveaux
-global SpriteFrameCurrentLevel as integer
-
-// sprite du cadre de la prochaineFigure
-global SpriteFrameNextFigure as integer
-
-// Label représentant le Score
-global scoreLabel as integer
-
-// Label représentant le niveau du jeu
-global levelLabel as integer
-
-global nextFigureSprite as integer
+// Contient les éléments d'interface en cours d'une partie
+global graphicsGameElements as GraphicsElementGameInterface
 
 // ================================================
 // ================== FONCTIONS ===================
 // ================================================
 
-// Affiche l'écran de jeu et démarre la musique
+// =======================================
+// ======== GESTION SPRITES INTERFACE ====
+// ==================================== //
+
+// Affiche toute l'interface du jeu
+function displayGameInterface()
+	displayGameBackGroundAndMusic()
+	
+	// On créer les colonnes gauche / droite et la ligne du bas
+	createBlockSprites()
+	
+	// On charge tout ce qui a attrait à l'interface
+	chargingGameInterface()
+	
+endfunction
+
+// Affiche l'arrière plan et démarre la musique
 // de jeu
 function displayGameBackGroundAndMusic()
 	// On charge la musique du jeu
@@ -102,195 +129,266 @@ function displayGameBackGroundAndMusic()
 	displayGameBackGround()
 endfunction
 
-
-// =======================================
-// ======== GESTION SPRITES INTERFACE ====
-// ==================================== //
+// Affiche l'arrière plan du jeu
 function displayGameBackGround()
-	imageBackground = LoadImage("background2.gif")
-	spriteBackground = CreateSprite(imageBackground)
+	graphicsGameElements.imageBackground = LoadImage("background2.gif")
+	graphicsGameElements.spriteBackground = CreateSprite(graphicsGameElements.imageBackground)
 		
 	// Le -1 sert à garder l'échelle d'origine par rapport à la largeur
-	SetSpriteSize(spriteBackground,-1,100)
+	SetSpriteSize(graphicsGameElements.spriteBackground,-1,100)
 	
-	SetSpritePosition(spriteBackground, 15, 0)
+	SetSpritePosition(graphicsGameElements.spriteBackground, 15, 0)
 endfunction
 
-function displayGameInterface()
-	
-	chargingGameInterface()
-	placedBars()
-	placedFrames()
-	placedLabels(game)
-	ChargingAndPlaceNextFigureSprite(game.nextShape)
-endfunction
-
+// Charge tous les éléments d'interface
 function chargingGameInterface()
-	imageleftAndRightBar = LoadImage("leftAndRight.png")
-	spriteLeftBar = CreateSprite(imageleftAndRightBar)
-	spriteRightBar = CreateSprite(imageleftAndRightBar)
+	graphicsGameElements.imageleftAndRightBar = LoadImage("leftAndRight.png")
+	graphicsGameElements.spriteLeftBar = CreateSprite(graphicsGameElements.imageleftAndRightBar)
+	graphicsGameElements.spriteRightBar = CreateSprite(graphicsGameElements.imageleftAndRightBar)
 	
-	imagetopAndBottomBar = LoadImage("topAndBottom.png")
-	spriteTopBar = CreateSprite(imagetopAndBottomBar)
-	spriteBottomBar = CreateSprite(imagetopAndBottomBar)
+	graphicsGameElements.imagetopAndBottomBar = LoadImage("topAndBottom.png")
+	graphicsGameElements.spriteTopBar = CreateSprite(graphicsGameElements.imagetopAndBottomBar)
+	graphicsGameElements.spriteBottomBar = CreateSprite(graphicsGameElements.imagetopAndBottomBar)
 	
-	imageNextFigure = LoadImage("next.png")
-	SpriteFrameNextFigure = CreateSprite(imageNextFigure)
+	graphicsGameElements.frameNextFigureImage = LoadImage("next.png")
+	graphicsGameElements.SpriteFrameNextFigure = CreateSprite(graphicsGameElements.frameNextFigureImage)
 	
-	imageScore = LoadImage("score.png")
-	SpriteFrameScore = CreateSprite(imageScore)
+	graphicsGameElements.frameScoreImage = LoadImage("score.png")
+	graphicsGameElements.SpriteFrameScore = CreateSprite(graphicsGameElements.frameScoreImage)
 	
-	imageCurrentLevel = LoadImage("level.png")
-	SpriteFrameCurrentLevel = CreateSprite(imageCurrentLevel)
+	graphicsGameElements.frameCurrentLevelImage = LoadImage("level.png")
+	graphicsGameElements.SpriteFrameCurrentLevel = CreateSprite(graphicsGameElements.frameCurrentLevelImage)
 	
 	chargingAllImageNextFigureInMemory()
 	
+	createAndPlacedBars()
+	createAndPlacedFrames()
+	createAndPlacedLabels()
+	chargingAndPlaceNextFigureSprite()
 endfunction
 
+// Permet de charger toutes les images des figures à
+// placer dans la case next en mémoire
 function chargingAllImageNextFigureInMemory()
-	tabImageNextFigure[0] = LoadImage("IImage.png")
-	tabImageNextFigure[1] = LoadImage("OImage.png")
-	tabImageNextFigure[2] = LoadImage("LImage.png")
-	tabImageNextFigure[3] = LoadImage("JImage.png")
-	tabImageNextFigure[4] = LoadImage("TImage.png")
-	tabImageNextFigure[5] = LoadImage("ZImage.png")
-	tabImageNextFigure[6] = LoadImage("SImage.png")
+	graphicsGameElements.tabImageNextFigure[0] = LoadImage("IImage.png")
+	graphicsGameElements.tabImageNextFigure[1] = LoadImage("OImage.png")
+	graphicsGameElements.tabImageNextFigure[2] = LoadImage("LImage.png")
+	graphicsGameElements.tabImageNextFigure[3] = LoadImage("JImage.png")
+	graphicsGameElements.tabImageNextFigure[4] = LoadImage("TImage.png")
+	graphicsGameElements.tabImageNextFigure[5] = LoadImage("ZImage.png")
+	graphicsGameElements.tabImageNextFigure[6] = LoadImage("SImage.png")
 endfunction
 
+// Permet de décharger toutes les images des figures à
+// placer dans la case next de la mémoire
 function dechargerAllImageNextFigureOutMemory()
 	c as integer
 	
-	for c = 0 to tabImageNextFigure.length
-		DeleteImage(tabImageNextFigure[c])
+	for c = 0 to graphicsGameElements.tabImageNextFigure.length
+		DeleteImage(graphicsGameElements.tabImageNextFigure[c])
 	next c
 endFunction
 
+// Permet de décharger tous les sprites et image
+// de l'interface de la partie en cours
 function dechargerSpriteEtImageJeu()
-	DeleteSprite(spriteBackground)
+	DeleteSprite(graphicsGameElements.spriteBackground)
 	
-	DeleteSprite(spriteLeftBar)
-	DeleteSprite(spriteRightBar)
-	DeleteSprite(spriteTopBar)
-	DeleteSprite(spriteBottomBar)
-	DeleteSprite(SpriteFrameNextFigure)
-	DeleteSprite(SpriteFrameCurrentLevel)
-	DeleteSprite(SpriteFrameScore)
+	DeleteSprite(graphicsGameElements.spriteLeftBar)
+	DeleteSprite(graphicsGameElements.spriteRightBar)
+	DeleteSprite(graphicsGameElements.spriteTopBar)
+	DeleteSprite(graphicsGameElements.spriteBottomBar)
+	DeleteSprite(graphicsGameElements.SpriteFrameNextFigure)
+	DeleteSprite(graphicsGameElements.SpriteFrameCurrentLevel)
+	DeleteSprite(graphicsGameElements.SpriteFrameScore)
 	
 	
-	DeleteImage(imageBackground)
-	DeleteImage(imageleftAndRightBar)
-	DeleteImage(imagetopAndBottomBar)
+	DeleteImage(graphicsGameElements.imageBackground)
+	DeleteImage(graphicsGameElements.imageleftAndRightBar)
+	DeleteImage(graphicsGameElements.imagetopAndBottomBar)
 	
-	DeleteImage(imageNextFigure)
-	DeleteImage(imageScore)
-	DeleteImage(imageCurrentLevel)
+	DeleteImage(graphicsGameElements.frameNextFigureImage )
+	DeleteImage(graphicsGameElements.frameScoreImage)
+	DeleteImage(graphicsGameElements.frameCurrentLevelImage)
 	
 	dechargerAllImageNextFigureOutMemory()
-	UnchargingNextFigureSprite()
+	unchargingNextFigureSprite()
 endfunction
 
-function ChargingAndPlaceNextFigureSprite(shape as tetrisShape)
-	width as integer
-	height as integer
+// Permet de charger l'image de la prochaine
+// figure qui va tombée après celle en cours
+function chargingAndPlaceNextFigureSprite()
 	
-	nextFigureSprite = CreateSprite(tabImageNextFigure[shape.shapeNumb - 1])
+	// hauteur de l'image à placer dans le cadre
+	heightFigureSprite as float
 	
-	SetSpriteSize(nextFigureSprite, -1, GetSpriteHeight(SpriteFrameNextFigure)/2)
-	SetSpritePosition(nextFigureSprite, getSpriteX(SpriteFrameNextFigure) + 3, GetSpriteY(SpriteFrameNextFigure) + 8)
-endFunction
+	// coordonnée x de l'image à placer dans le cadre
+	coorXFigureSprite as float
+	
+	// coordonnée y de l'image à placer dans le cadre
+	coorYFigureSprite as float
+	
+	// On fait -1 car dans le tableau, la figure correspond au numéro - 1
+	// exemple : la figure I est en position 1 dans nextShape, mais dans tabImageNextFigure elle est en 0
+	graphicsGameElements.nextFigureSprite = CreateSprite(graphicsGameElements.tabImageNextFigure[game.nextShape.shapeNumb - 1])
+	
+	// On calcule la hauteur de l'image à placer dans next
+	heightFigureSprite = GetSpriteHeight(graphicsGameElements.SpriteFrameNextFigure)/1.5
+	
+	// On calcule les coordonnées
+	coorXFigureSprite = getSpriteX(graphicsGameElements.SpriteFrameNextFigure) + 2
+	coorYFigureSprite = GetSpriteY(graphicsGameElements.SpriteFrameNextFigure) + 5
+	
+	// On met à jour la taille et on place l'image
+	SetSpriteSize(graphicsGameElements.nextFigureSprite, -1, heightFigureSprite)
+	SetSpritePosition(graphicsGameElements.nextFigureSprite, coorXFigureSprite , coorYFigureSprite)
+endfunction
 
-function UnchargingNextFigureSprite()
-	DeleteSprite(nextFigureSprite)		
-endFunction
+// Efface le sprite de la prochaine figure dans le cadre next
+function unchargingNextFigureSprite()
+	DeleteSprite(graphicsGameElements.nextFigureSprite)		
+endfunction
 
 // Permet de placer les barres ainsi que d'ajuster
 // la taille selon l'écran
-function placedBars()
+function createAndPlacedBars()
 	
-	SetSpriteSize(spriteLeftBar, -1, 100)
-	SetSpriteSize(spriteRightBar, -1, 100)
-	SetSpriteSize(spriteTopBar, 25.5, -1)
-	SetSpriteSize(spriteBottomBar, 25.5, -1)
+	SetSpriteSize(graphicsGameElements.spriteLeftBar, -1, 100)
+	SetSpriteSize(graphicsGameElements.spriteRightBar, -1, 100)
+	SetSpriteSize(graphicsGameElements.spriteTopBar, 25.5, -1)
+	SetSpriteSize(graphicsGameElements.spriteBottomBar, 25.5, -1)
 	
-	SetSpritePosition(spriteLeftBar, xOffset, 0)
-	SetSpritePosition(spriteRightBar, 62.5, 0)
-	SetSpritePosition(spriteTopBar, xOffset, yOffset)
-	SetSpritePosition(spriteBottomBar, xOffset, 99.5)
+	SetSpritePosition(graphicsGameElements.spriteLeftBar, graphicsGameElements.xOffset, 0)
+	SetSpritePosition(graphicsGameElements.spriteRightBar, 62.5, 0)
+	SetSpritePosition(graphicsGameElements.spriteTopBar, graphicsGameElements.xOffset, graphicsGameElements.yOffset)
+	SetSpritePosition(graphicsGameElements.spriteBottomBar, graphicsGameElements.xOffset, 99.5)
 endfunction
 
 // Permet de placer les divers cadres (figure, niveau, score...)
 // ainsi que d'ajuster la taille
-function placedFrames()
-	imageWidth as integer
-	imageHeight as integer
+function createAndPlacedFrames()
+	// Tableau contenant longueur et largeur des sprites
+	lengths as integer[1]
 	
-	// Calcule pour nextFigure
-	imageWidth = pixelToPercentWidth(GetImageWidth(imageNextFigure))
-	imageHeight = pixelToPercentHeight(GetImageHeight(imageNextFigure))
+	// Calcule de la taille du cadre next et attribution (conversion px => %)
+	lengths = calculateHeightAndWidthForImage(graphicsGameElements.frameNextFigureImage)
+	SetSpriteSize(graphicsGameElements.spriteFrameNextFigure, lengths[0], lengths[1])
 	
-	SetSpriteSize(SpriteFrameNextFigure, imageWidth, imageHeight)
+	// Calcule de la taille du cadre level et attribution (conversion px => %)
+	lengths = calculateHeightAndWidthForImage(graphicsGameElements.frameCurrentLevelImage)
+	SetSpriteSize(graphicsGameElements.spriteFrameCurrentLevel, lengths[0], lengths[1])
 	
-	// Calcule pour level
-	imageWidth = pixelToPercentWidth(GetImageWidth(imageCurrentLevel))
-	imageHeight = pixelToPercentHeight(GetImageHeight(imageCurrentLevel))
+	// Calcule de la taille du cadre score et attribution (conversion px => %)
+	lengths = calculateHeightAndWidthForImage(graphicsGameElements.frameScoreImage)
+	SetSpriteSize(graphicsGameElements.spriteFrameScore, lengths[0], lengths[1])
 	
-	SetSpriteSize(SpriteFrameCurrentLevel, imageWidth, imageHeight)
+	// Mise en place des cadres dans l'interface
+	placedFrames()
 	
-	// Calcule pour score
-	imageWidth = pixelToPercentWidth(GetImageWidth(imageScore))
-	imageHeight = pixelToPercentHeight(GetImageHeight(imageScore))
-	
-	SetSpriteSize(SpriteFrameScore, imageWidth, imageHeight)
-	
-	// Placement du nextFigure
-	SetSpritePosition(SpriteFrameNextFigure, getSpriteX(spriteRightBar) + 0.3, getSpriteY(spriteRightBar))
-	
-	// Placement du score
-	SetSpritePosition(SpriteFrameScore, getSpriteX(spriteRightBar) + 0.3, getSpriteY(spriteRightBar) + GetSpriteHeight(SpriteFrameNextFigure)*2.5)
-	
-	// Placement du level
-	SetSpritePosition(SpriteFrameCurrentLevel, getSpriteX(spriteLeftBar) - GetSpriteWidth(SpriteFrameCurrentLevel), getSpriteY(spriteLeftBar))
 endfunction
+
+// Permet de mettre en place les cadres avec le score,
+// la prochaine figure, le niveau...
+function placedFrames()
+	
+	// Coordonnée x du sprite à placer
+	coorXSprite as float
+	
+	// Coordonnée y du sprite à placer
+	coorYSprite as float
+	
+	// =======================================================
+	
+	// calcules pour le cadre next
+	coorXSprite = getSpriteX(graphicsGameElements.spriteRightBar) + 0.3
+	coorYSprite = getSpriteY(graphicsGameElements.spriteRightBar)
+	
+	// Placement pour le cadre next
+	SetSpritePosition(graphicsGameElements.spriteFrameNextFigure, coorXSprite , coorYSprite )
+	
+	// calcules pour le cadre score
+	coorXSprite = getSpriteX(graphicsGameElements.spriteRightBar) + 0.3
+	coorYSprite = (getSpriteY(graphicsGameElements.spriteRightBar) + GetSpriteHeight(graphicsGameElements.spriteRightBar)) - GetSpriteHeight(graphicsGameElements.spriteFrameScore)
+	
+	// Placement pour le cadre score
+	SetSpritePosition(graphicsGameElements.spriteFrameScore, coorXSprite , coorYSprite )
+	
+	// calcules pour le cadre level
+	coorXSprite = getSpriteX(graphicsGameElements.spriteLeftBar) - GetSpriteWidth(graphicsGameElements.spriteFrameCurrentLevel)
+	coorYSprite = getSpriteY(graphicsGameElements.spriteLeftBar)
+	
+	// Placement pour le cadre level
+	SetSpritePosition(graphicsGameElements.spriteFrameCurrentLevel, coorXSprite , coorYSprite)
+endfunction
+
+// Calcule la hauteur et la largeur en pourcent depuis la taille
+// original en pixel d'une image donnée
+// 0 : largeur
+// 1 : hauteur
+function calculateHeightAndWidthForImage(image as integer)
+	lengths as integer[1]
+	
+	lengths[0] = pixelToPercentWidth(GetImageWidth(image))
+	lengths[1] = pixelToPercentHeight(GetImageHeight(image))
+endfunction lengths
 
 // Permet de placer les labels pour le score,
 // le niveau...
-function placedLabels(game as tetrisGame)
+function createAndPlacedLabels()
 	
-	levelLabel = CreateText(Str(game.level))
+	// Coordonnée x du sprite à placer
+	coorXText as float
 	
-	scoreLabel = CreateText(Str(game.score))
+	// Coordonnée y du sprite à placer
+	coorYText as float
+	
+	graphicsGameElements.levelLabel = CreateText(Str(game.level))
+	
+	graphicsGameElements.scoreLabel = CreateText(Str(game.score))
 
-	// Pour le score
-	SetTextSize(scoreLabel, 12)
-	SetTextPosition(scoreLabel, GetSpriteX(SpriteFrameScore) + (GetSpriteWidth(SpriteFrameScore)/ 3), GetSpriteY(SpriteFrameScore) + (GetSpriteHeight(SpriteFrameScore)/3))
-	SetTextColor(scoreLabel, 255,255,255,255)
+	// ========= SCORE ==================
+	// calcules ...
+	coorXText = GetSpriteX(graphicsGameElements.spriteFrameScore) + (GetSpriteWidth(graphicsGameElements.spriteFrameScore)/2.5)
+	coorYText = GetSpriteY(graphicsGameElements.spriteFrameScore) + (GetSpriteHeight(graphicsGameElements.spriteFrameScore)/3)
 	
-	// Pour le niveau
-	SetTextSize(levelLabel, 12)
-	SetTextPosition(levelLabel, GetSpriteX(SpriteFrameCurrentLevel) + (GetSpriteWidth(SpriteFrameCurrentLevel)/ 3), GetSpriteY(SpriteFrameCurrentLevel) + (GetSpriteHeight(SpriteFrameCurrentLevel)/3))
-	SetTextColor(levelLabel, 255,255,255,255)
-
+	// placement ...
+	SetTextSize(graphicsGameElements.scoreLabel, 7)
+	SetTextPosition(graphicsGameElements.scoreLabel, coorXText , coorYText)
+	SetTextColor(graphicsGameElements.scoreLabel, 255,255,255,255)
+	
+	// ========= NIVEAU ==================
+	// calcules ...
+	coorXText = GetSpriteX(graphicsGameElements.spriteFrameCurrentLevel) + (GetSpriteWidth(graphicsGameElements.spriteFrameCurrentLevel)/2.5)
+	coorYText = GetSpriteY(graphicsGameElements.spriteFrameCurrentLevel) + (GetSpriteHeight(graphicsGameElements.spriteFrameCurrentLevel)/3)
+	
+	// placement ...
+	SetTextSize(graphicsGameElements.levelLabel, 7)
+	SetTextPosition(graphicsGameElements.levelLabel, coorXText , coorYText)
+	SetTextColor(graphicsGameElements.levelLabel, 255,255,255,255)
 endfunction
 
-function placedImageForNextFigure(nextFigure as tetrisShape)
-	
-endfunction
-
+// Permet de mettre à jour le score coté interface avec 
+// le texte passer en paramètre
 function scoreLabelUpdate(score as integer)
-	SetTextString(scoreLabel, Str(score))
+	SetTextString(graphicsGameElements.scoreLabel, Str(score))
 endfunction
 
+// Permet de mettre à jour le level coté interface avec 
+// le texte passer en paramètre
 function levelLabelUpdate(level as integer)
-	SetTextString(levelLabel, Str(level))
+	SetTextString(graphicsGameElements.levelLabel, Str(level))
 endfunction
 
+// Permet d'effacer le texte du score coté interface
 function deleteScoreDisplay()
-	DeleteText(scoreLabel)
+	DeleteText(graphicsGameElements.scoreLabel)
 endfunction
 
+// Permet d'effacer le texte du niveau coté interface
 function deleteLevelDisplay()
-	DeleteText(levelLabel)
+	DeleteText(graphicsGameElements.levelLabel)
 endfunction
+
 
 // =======================================
 // =========== GESTION DES BLOCS =========
@@ -312,12 +410,12 @@ endfunction tabImage
 // Initialise la taille des blocs du tetris
 // selon l'affichage
 function initBlocSize()
-	tailleBlock = yScreen / GRID_Y
-	tailleBlocPourcent = tailleBlock * 100/yScreen
+	graphicsGameElements.tailleBlock = yScreen / GRID_Y
+	graphicsGameElements.tailleBlocPourcent = graphicsGameElements.tailleBlock * 100/yScreen
 endfunction
 
 // Genere les sprites pour chaque colonne et rang de block
-function createBlockSprites(tabImage ref as blocksGraphics)
+function createBlockSprites()
 	count as integer = 1
 	tailleBlocPourcent as float
 	y as integer
@@ -325,7 +423,7 @@ function createBlockSprites(tabImage ref as blocksGraphics)
 	
 	for y = 1 to GRID_Y
 		for x = 1 to GRID_X
-			CreateSprite(count, tabImage.imageArray[0])
+			CreateSprite(count, blocksPicture.imageArray[0])
 			SetSpriteSize(count, -1, tailleBlocPourcent)
 			inc count
 		next x
@@ -348,7 +446,7 @@ function clearBlockSprites(tabImage ref as blocksGraphics)
 endfunction
 
 // Parcours la grille de nombre et affiche les blocks associés
-function updateGridBlocks(imageGrid as blocksGraphics)
+function updateGridBlocks()
 	count as integer = 1
 	image as integer
 	y as integer
@@ -363,31 +461,31 @@ function updateGridBlocks(imageGrid as blocksGraphics)
 					SetSpriteVisible(count,0)
 				endcase
 				case 1
-					image = imageGrid.imageArray[0]
+					image = blocksPicture.imageArray[0]
 				endcase
 				case 2
-					image = imageGrid.imageArray[1]
+					image = blocksPicture.imageArray[1]
 				endcase
 				case 3
-					image = imageGrid.imageArray[2]
+					image = blocksPicture.imageArray[2]
 				endcase
 				case 4
-					image = imageGrid.imageArray[3]
+					image = blocksPicture.imageArray[3]
 				endcase
 				case 5
-					image = imageGrid.imageArray[4]
+					image = blocksPicture.imageArray[4]
 				endcase
 				case 6
-					image = imageGrid.imageArray[5]
+					image = blocksPicture.imageArray[5]
 				endcase
 				case 7
-					image = imageGrid.imageArray[6]
+					image = blocksPicture.imageArray[6]
 				endcase
 			endselect
 			
 			SetSpriteImage(count,image)
-			SetSpriteSize(count, -1, tailleBlocPourcent)
-			SetSpritePosition(count, x*xSpace + xOffset, y*tailleBlocPourcent+yOffset)
+			SetSpriteSize(count, -1, graphicsGameElements.tailleBlocPourcent)
+			SetSpritePosition(count, x*xSpace + graphicsGameElements.xOffset, y*graphicsGameElements.tailleBlocPourcent+graphicsGameElements.yOffset)
 			inc count
 		next x
 	next y
@@ -397,8 +495,8 @@ endfunction
 // Permet d'initialiser les coordonnées d'affichage des blocs,
 // barres...
 function initOffset()
-	xOffset = ((xScreen - GRID_X * tailleBlock) / 2)*100/xScreen
-	yOffset = (yScreen - GRID_Y * tailleBlock)*100/yScreen
+	graphicsGameElements.xOffset = ((xScreen - GRID_X * graphicsGameElements.tailleBlock) / 2)*100/xScreen
+	graphicsGameElements.yOffset = (yScreen - GRID_Y * graphicsGameElements.tailleBlock)*100/yScreen
 endfunction
 
 // Affichage du game over
@@ -416,7 +514,7 @@ function displayGameOver()
 
 	for y=1 to GRID_Y
 		for x=1 to GRID_X
-			setspritesize(count,tailleBlock,tailleBlock)
+			setspritesize(count,graphicsGameElements.tailleBlock,graphicsGameElements.tailleBlock)
 			SetSpritePhysicsOn(count,2)
 			SetSpritePhysicsVelocity(count,random(-500,1000),random(-500,1000))
 			SetSpriteShape(count,2)
@@ -427,7 +525,7 @@ function displayGameOver()
 	next y
 
 	game.mode = 1
-	clearBlockSprites(game.blocksPicture)
+	clearBlockSprites(blocksPicture)
 	
 	deleteScoreDisplay()
 	deleteLevelDisplay()

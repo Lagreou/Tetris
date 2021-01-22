@@ -1,27 +1,45 @@
 // ===============================================
-// ================= FONCTIONS ===================
+// ================= TYPES =======================
+//================================================
+type GraphicsMenu
+	// image arrière accueil
+	imageAccueil as integer
+	
+	// Contient le sprite d'accueil
+	spriteAccueil  as integer 
+	
+	// VirtualButton : bouton de jeu
+	playButton as integer
+	
+	// VirtualButton : bouton d'option
+	optionsButton as integer
+	
+	// VirtualButton : bouton permettant de sortir
+	exitButton as integer
+	
+	// Image du bouton virtuel option
+	imageOptionButton as integer
+	
+	// Image du bouton virtuel play
+	imagePlayButton as integer
+	
+	// Image du bouton virtuel exit
+	imageExitButton as integer
+endtype
+
+// ===============================================
+// ================= VARIABLES GLOBALES ==========
 //================================================
 
-// Contient le sprite d'accueil
-global spriteAccueil  as integer 
+global menuInterface as GraphicsMenu
 
-global playButton as integer = 1
-
-global optionsButton as integer = 2
-
-global exitButton as integer = 3
+// ===============================================
+// ================= FONCTIONS ===================
+//================================================
 
 // Affiche l'écran d'accueil et démarre la musique
 // d'écran d'accueil
 function afficherAccueil()
-	
-	// On decharge la musique de jeu (car on peux passer
-	// directement du jeu au menu
-	dechargerMusiqueJeu()
-	
-	// On decharge l'ecran de jeu
-	dechargerSpriteEtImageJeu()
-	
 	// On charge la musique d'accueil
 	chargerMusiqueAccueil()
 	
@@ -29,60 +47,66 @@ function afficherAccueil()
 	chargerSpriteAccueil()
 	
 	// On charge les boutons de l'accueil
-	positionnerBoutons()
+	chargedAndPositionedBoutons()
 endfunction
 
 function chargerSpriteAccueil()
 	accueilLargeur as integer
 	
 	chargerImageAccueil()
-	spriteAccueil = CreateSprite(imageAccueil)
+	menuInterface.spriteAccueil = CreateSprite(menuInterface.imageAccueil)
 	
 	// Obtention de la taille du sprite
-	accueilLargeur = GetSpriteWidth(spriteAccueil)
+	accueilLargeur = GetSpriteWidth(menuInterface.spriteAccueil)
 	
 	// Le -1 sert à garder l'échelle d'origine par rapport à la largeur
-	SetSpriteSize(spriteAccueil,100,-1)
+	SetSpriteSize(menuInterface.spriteAccueil,100,-1)
 endfunction
 
-function positionnerBoutons()
-	imageOptionButton = LoadImage("OptionsButton.png")
-	imageExitButton = LoadImage("ExitButton.png")
-	imagePlayButton = LoadImage("StartPlayingButton.png")
+function chargedAndPositionedBoutons()
+	menuInterface.playButton = 1
 	
-	AddVirtualButton(playButton,49,60,5)
-	SetVirtualButtonSize(playButton, pixelToPercentWidth(GetImageWidth(imagePlayButton)),-1)
-	SetVirtualButtonImageUp(playButton, imagePlayButton)
-	SetVirtualButtonImageDown(playButton, imagePlayButton)
+	menuInterface.optionsButton = 2
 	
-	AddVirtualButton(optionsButton,49,70,5)
-	SetVirtualButtonSize(optionsButton, pixelToPercentWidth(GetImageWidth(imageOptionButton)),-1)
-	SetVirtualButtonImageUp(optionsButton, imageOptionButton)
-	SetVirtualButtonImageDown(optionsButton, imageOptionButton)
+	menuInterface.exitButton = 3
 	
-	AddVirtualButton(exitButton,49,80,5)
-	SetVirtualButtonSize(exitButton, pixelToPercentWidth(GetImageWidth(imageExitButton)),-1)
-	SetVirtualButtonImageUp(exitButton, imageExitButton)
-	SetVirtualButtonImageDown(exitButton, imageExitButton)
+	menuInterface.imageOptionButton = LoadImage("OptionsButton.png")
+	menuInterface.imageExitButton = LoadImage("ExitButton.png")
+	menuInterface.imagePlayButton = LoadImage("StartPlayingButton.png")
+	
+	AddVirtualButton(menuInterface.playButton,49,60,5)
+	SetVirtualButtonSize(menuInterface.playButton, pixelToPercentWidth(GetImageWidth(menuInterface.imagePlayButton)),-1)
+	SetVirtualButtonImageUp(menuInterface.playButton, menuInterface.imagePlayButton)
+	SetVirtualButtonImageDown(menuInterface.playButton, menuInterface.imagePlayButton)
+	
+	AddVirtualButton(menuInterface.optionsButton,49,70,5)
+	SetVirtualButtonSize(menuInterface.optionsButton, pixelToPercentWidth(GetImageWidth(menuInterface.imageOptionButton)),-1)
+	SetVirtualButtonImageUp(menuInterface.optionsButton, menuInterface.imageOptionButton)
+	SetVirtualButtonImageDown(menuInterface.optionsButton, menuInterface.imageOptionButton)
+	
+	AddVirtualButton(menuInterface.exitButton,49,80,5)
+	SetVirtualButtonSize(menuInterface.exitButton, pixelToPercentWidth(GetImageWidth(menuInterface.imageExitButton)),-1)
+	SetVirtualButtonImageUp(menuInterface.exitButton, menuInterface.imageExitButton)
+	SetVirtualButtonImageDown(menuInterface.exitButton, menuInterface.imageExitButton)
 endfunction
 
 function dechargerButtons()
-	DeleteImage(imageOptionButton)
-	DeleteImage(imageExitButton)
-	DeleteImage(imagePlayButton )
+	DeleteImage(menuInterface.imageOptionButton)
+	DeleteImage(menuInterface.imageExitButton)
+	DeleteImage(menuInterface.imagePlayButton )
 	
-	DeleteVirtualButton(playButton)
-	DeleteVirtualButton(optionsButton)
-	DeleteVirtualButton(exitButton)
+	DeleteVirtualButton(menuInterface.playButton)
+	DeleteVirtualButton(menuInterface.optionsButton)
+	DeleteVirtualButton(menuInterface.exitButton)
 endfunction
 
 function dechargerSpritesAccueil()
-	DeleteSprite(spriteAccueil)
-	DeleteImage(imageAccueil)
+	DeleteSprite(menuInterface.spriteAccueil)
+	DeleteImage(menuInterface.imageAccueil)
 	
-	DeleteImage(imagePlayButton)
-	DeleteImage(imageOptionButton)
-	DeleteImage(imageExitButton)
+	DeleteImage(menuInterface.imagePlayButton)
+	DeleteImage(menuInterface.imageOptionButton)
+	DeleteImage(menuInterface.imageExitButton)
 	
 	// On supprime les boutons
 	dechargerButtons()
@@ -90,5 +114,5 @@ endfunction
 
 // Charge l'image d'accueil
 function chargerImageAccueil()
-	imageAccueil = LoadImage("splashScreen2.png")
+	menuInterface.imageAccueil = LoadImage("splashScreen2.png")
 endfunction

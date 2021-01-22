@@ -3,8 +3,9 @@
  (grille, figure, score, niveau...) 
 */
 
-// =============== OBJET JEU ================== //
-// =============================================//
+// ===============================================
+// ================= TYPES =======================
+//================================================
 type tetrisGame
 	
 	// Vitesse de boucle de la partie
@@ -13,21 +14,27 @@ type tetrisGame
 	// Seuil des scores pour les niveaux
 	scoreLimit as integer[5]
 	
-	mode as integer // Indique si c'est l'écran d'accueil ou le jeu
-
-	currentShape as TetrisShape // Figure en cours
-	nextShape as TetrisShape // Figure après celle en cours
-
-	dataGrid as dataGridGame // Grille de jeu
-
-	blocksPicture as blocksGraphics // Tableau contenant les blocs du jeu
-
-	isShapeMoved as integer   // Permet de savoir si il y'a eu un mouvement
-						  // (Après un mouvement ou lors d'un changement de figure)
-
-	changeShape as integer // Permet de savoir si on change de figure
+	// Indique si c'est l'écran d'accueil ou le jeu
+	mode as integer
 	
-	shapes as TetrisShape[7] // Tableau contenant les figures possibles
+	// Figure en cours
+	currentShape as TetrisShape 
+	
+	// Figure après celle en cours
+	nextShape as TetrisShape
+	
+	// Grille de jeu
+	dataGrid as dataGridGame
+	
+	// Permet de savoir si il y'a eu un mouvement
+	// (Après un mouvement ou lors d'un changement de figure)
+	isShapeMoved as integer   
+	
+	// Permet de savoir si on change de figure
+	changeShape as integer 
+	
+	// Tableau contenant les figures possibles
+	shapes as TetrisShape[7]
 	
 	// variable représentant le score
 	score as integer
