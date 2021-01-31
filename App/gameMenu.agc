@@ -28,16 +28,6 @@ function interceptClickedButton()
 		game.mode = 2
 	endif
 	if GetVirtualButtonPressed(menuInterface.optionsButton)
-		goToOptionsFromMenu()
 		game.mode = 3
 	endif
-endfunction
-
-function goToOptionsFromMenu()
-	
-	// Déplacer le chargement car si dans le mauvais ordre
-	// peut provoquer des bugs
-	dechargerSpritesAccueil()	
-	
-	chargerInterfaceGraphicsOptions()
 endfunction

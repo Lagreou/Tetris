@@ -7,18 +7,17 @@
 // ================ VARIABLES GLOBALES ========================== //
 // ============================================================== //
 
-// ============== FICHIERS GRAPHIQUES (IMAGES) =================//
-//============================================================= //
-
-// représente l'image de chargement
-global imageLoading as integer
-
 // ============== FICHIERS SONS (MUSIQUES, BRUITAGES...) =================//
 //====================================================================== //
-global mainSound as integer
-global gameSound as integer
+global mainMusic as integer
+global gameMusic as integer
 global deleteLineSound as integer
 
+// Volume de la musique
+global volumeMusic as float
+
+// Volume du son
+global volumeSound as float
 // ============== VARIABLES POUR L'ECRAN UTILISATEUR ==================== //
 //====================================================================== //
 // Taille de l'écran de l'utilisateur (adapté au chargement)
@@ -30,7 +29,6 @@ global deviceRunOn as string
 // =================================================================== //
 // ================ FIN VARIABLES GLOBALES ========================== //
 // ================================================================ //
-
 
 // FONCTION D'INITIALISATION D'ECRAN
 function initDisplay()
@@ -102,27 +100,71 @@ endfunction
 
 function chargerMusiqueAccueil()
 	// Chargement de la musique d'accueil
-	mainSound = LoadSoundOGG("Jaunter-Reset.ogg")
-	//~ playSound(mainSound,50,1)
+	mainMusic = LoadMusicOGG("Jaunter-Reset.ogg")
+	PlayMusicOGG(mainMusic,1)
+	SetMusicVolumeOGG(mainMusic, volumeMusic)
 endfunction
 
 function chargerMusiqueJeu()
 	// Chargement de la musique du jeu
-	gameSound = LoadSoundOGG("Kubbi-Ember-04Cascade.ogg")
-	//~ playSound(gameSound,50,1)
-	
+	gameMusic = LoadMusicOGG("Kubbi-Ember-04Cascade.ogg")
+	PlayMusicOGG(gameMusic,1)
+	SetMusicVolumeOGG(gameMusic, volumeMusic)
 	// Chargement des sons pour le jeu
 	deleteLineSound = LoadSound("line.wav")
 endfunction
 
 function dechargerMusiqueAccueil()
 	// dechargement de la musique d'accueil
-	DeleteSound(mainSound)
+	DeleteMusicOGG(mainMusic)
 endfunction
 
 function dechargerMusiqueJeu()
 	// dechargement de la musique du jeu
-	DeleteSound(gameSound)
+	DeleteMusicOGG(gameMusic)
+endfunction
+
+/* =================================================
+					FONCTIONS FICHIERS
+===================================================*/
+
+// Permet d'enregistrer le niveau sonore de la musique dans le fichier
+function recordMusicAndSoundVolume(musicVolume as integer, soundVolume as integer)
+	file as integer
+	
+	file = OpenToWrite("files/volume.datt",0)
+	WriteLine(file,"#MUSIC")
+	WriteLine(file,str(musicVolume))
+		
+	WriteLine(file,"#SOUND")
+	WriteLine(file,str(soundVolume))
+	
+	CloseFile(file)		
+
+endfunction
+
+// On charge les volumes stockées dans le fichier
+function chargedMusicAndSoundVolume()
+	file as integer
+	
+	if(GetFileExists("files/volume.datt"))
+		
+		file = OpenToRead("files/volume.datt")
+		
+		while(not FileEOF(file))
+			if(ReadLine(file) = "#MUSIC")
+				volumeMusic = val(ReadLine(file))
+			endif
+			if(ReadLine(file) = "#SOUND")
+				volumeSound = val(ReadLine(file))
+			endif
+		endwhile
+		CloseFile(file)
+	else
+		// Chargement par défaut
+		volumeMusic = 100
+		volumeSound = 100
+	endif
 endfunction
 
 /* =================================================

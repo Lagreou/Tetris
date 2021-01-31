@@ -16,6 +16,7 @@
 #include "menuGraphics.agc"
 #include "gameMenu.agc"
 #include "optionsGraphics.agc"
+#include "optionInputs.agc"
 
 // Obligation de définir les types de variable
 #option_explicit
@@ -32,8 +33,16 @@ isAccueilCharged as integer = 0
 // (ecran de jeu chargé)
 isGameCharged as integer = 0
 
+isOptionCharged as integer = 0
+
+// Permet de voir si le programme vient juste d'être lancer
+// pour le premier affichage du menu 
+isGameLauch as integer = 1
+
 // Nombre de secondes dans le jeu
 secondsInGame as integer
+
+spriteOptionClic as integer
 
 // =============== INSTRUCTIONS POUR LE JEU ============== //
 
@@ -44,6 +53,9 @@ secondsInGame as integer
 // changeShape : 0 (pas de changement de figure au départ)
 initGameDefault()
 
+// Chargement du fichier permettant de régler le son
+chargedMusicAndSoundVolume()
+
 // Boucle principale du jeu
 do
 	// Ici, on regarde si on est dans l'écran titre ou
@@ -53,9 +65,21 @@ do
 			if isAccueilCharged
 				interceptClickedButton()
 			else
-				goToAccueilFromGame()
-				isAccueilCharged = 1
-				isGameCharged = 0
+				if(isGameCharged)
+					goToAccueilFromGame()
+					isAccueilCharged = 1
+					isGameCharged = 0
+				elseif(isOptionCharged)
+					goToMenuFromOption()
+					isAccueilCharged = 1
+					isOptionCharged = 0
+				elseif(isGameLauch)
+					afficherAccueil()
+					// On charge la musique d'accueil
+					chargerMusiqueAccueil()
+					isAccueilCharged = 1
+					isGameLauch = 0
+				endif
 			endif
 			
 			// On synchronise à ce niveau car si l'utilisateur clic il faut
@@ -63,8 +87,7 @@ do
 			sync()
 		endcase
 		
-		case 2 :
-					
+		case 2 :					
 			// ============ INSTRUCTIONS EN RAPPORT AVEC LA PARTIE ========== //
 			if isGameCharged
 				playingGame()
@@ -78,9 +101,49 @@ do
 				
 				// En revanche, l'écran d'accueil n'est plus chargé
 				isAccueilCharged = 0
+				
+				isOptionCharged = 0
 			endif
 			sync()					
 		endcase
+		
+		case 3 :
+			if isOptionCharged		
+				
+				scaleJauge as float
+				
+				// Ici, on regarde si on règle le son
+				spriteOptionClic = detecterClicSurImageSon()
+								
+				if(GetSpriteExists(spriteOptionClic))
+					// Ici on défini le scale selon si c'est la jauge de musique
+					// ou de son
+					if (spriteOptionClic = optionInterface.spriteMusicJauge)
+						scaleJauge = volumeMusic / 100
+						volumeMusic = bougerJauge(spriteOptionClic, scaleJauge) * 100
+						SetMusicSystemVolumeOGG(volumeMusic)
+					elseif(spriteOptionClic = optionInterface.spriteSoundJauge)
+						scaleJauge = volumeSound/ 100
+						volumeSound = bougerJauge(spriteOptionClic, scaleJauge) * 100
+						SetSoundInstanceVolume(deleteLineSound, volumeSound)
+					endif		
+									
+					// On enregistre dans le fichier
+					recordMusicAndSoundVolume(volumeMusic, volumeSound)
+					
+				// Sinon on regarde si on clique sur exit et
+				// on retourne à l'accueil dans ce cas	
+				elseif(isPressedOnExitOption())
+					game.mode = 1
+				endif
+			else
+				goToOptionsFromMenu()
+				isAccueilCharged = 0
+				isOptionCharged = 1
+			endif
+			sync()
+		endcase
+		
 	endselect
 loop
 
@@ -275,5 +338,24 @@ function goToAccueilFromGame()
 	// On decharge l'ecran de jeu
 	dechargerSpriteEtImageJeu()
 	
+	// On charge la musique d'accueil
+	chargerMusiqueAccueil()
+	
 	afficherAccueil()
 endfunction
+
+function goToOptionsFromMenu()
+	
+	// Déplacer le chargement car si dans le mauvais ordre
+	// peut provoquer des bugs
+	dechargerSpritesAccueil()	
+	
+	chargerInterfaceGraphicsOptions()
+endfunction
+
+function goToMenuFromOption()
+	// On décharge l'interface d'option
+	dechargedAllImagesOption()
+	
+	afficherAccueil()
+endFunction

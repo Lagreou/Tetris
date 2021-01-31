@@ -2,8 +2,10 @@
 // ================= VARIABLES ===================
 //================================================
 
+// représente l'image de chargement
+global imageLoading as integer
 global downloadLabel as integer
-global textChargement as integer
+
 global chargingSprite as integer
 
 // ===============================================

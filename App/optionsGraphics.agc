@@ -27,6 +27,12 @@ type GraphicsOption
 	spriteMusicJauge as integer
 	
 	spriteSoundJauge as integer
+	
+	// Image du bouton virtuel exit
+	imageExitButton as integer
+	
+	// VirtualButton : bouton permettant de sortir
+	exitButton as integer
 endType
 
 
@@ -64,6 +70,19 @@ function chargerImageOptions()
 	
 	// On charge la jauge
 	optionInterface.imageMusicAndSoundJauge = LoadImage("jauge.png")
+	
+	
+endfunction
+
+// Permet de charger les boutons et de les placés
+function chargedVirtualButtonOptions()
+	optionInterface.exitButton = 1
+	optionInterface.imageExitButton = LoadImage("ExitButton.png")
+	
+	AddVirtualButton(optionInterface.exitButton,52,80,5)
+	SetVirtualButtonSize(optionInterface.exitButton, pixelToPercentWidth(GetImageWidth(optionInterface.imageExitButton)),-1)
+	SetVirtualButtonImageUp(optionInterface.exitButton, optionInterface.imageExitButton)
+	SetVirtualButtonImageDown(optionInterface.exitButton, optionInterface.imageExitButton)
 endfunction
 
 // Initialiser les sprites (création)
@@ -74,18 +93,22 @@ function initialiserSprites()
 	// On charge l'image de la barre de son
 	optionInterface.spriteSoundBar = CreateSprite(optionInterface.imageSoundBar)
 	
-	// On charge la jauge
-	//~ optionInterface.spriteMusicJauge = CreateSprite(optionInterface.imageMusicAndSoundJauge)
-	//~ 
-	//~ optionInterface.spriteSoundJauge = CreateSprite(optionInterface.imageMusicAndSoundJauge)
+	// On charge les jauge
+	optionInterface.spriteMusicJauge = CreateSprite(optionInterface.imageMusicAndSoundJauge)
+	optionInterface.spriteSoundJauge = CreateSprite(optionInterface.imageMusicAndSoundJauge)
 endfunction
 
 // Placement des sprites (taille + position)
 function placedSpritesOption()
 	
-	// largeur du sprite
-	widthSprite as float
-	
+	placedSpriteBars()
+	placedJauge()
+	chargedVirtualButtonOptions()
+endfunction
+
+// Placement des sprites de description
+// (musique, son...)
+function placedSpriteBars()
 	// hauteur du sprite
 	heightSprite as float
 	
@@ -96,9 +119,59 @@ function placedSpritesOption()
 	heightSprite = pixelToPercentHeight(GetImageHeight(optionInterface.imageSoundBar))
 	SetSpriteSize(optionInterface.spriteSoundBar, -1, heightSprite)
 	SetSpritePosition(optionInterface.spriteSoundBar, 40, 50)
+endfunction
+
+// Placement des sprites des jauges
+function placedJauge()
+	// hauteur du sprite
+	heightSprite as float
 	
-	//~ heightSprite = pixelToPercentHeight(GetImageHeight(optionInterface.imageMusicAndSoundJauge))
-	//~ SetSpriteSize(optionInterface.spriteMusicJauge, )
-	//~ SetSpriteSize(optionInterface.spriteSoundBar, -1, heightSprite)
+	coorXSprite as float
 	
+	coorYSprite as float
+	
+	scale as float
+	
+	// Sprite de la jauge de musique
+	heightSprite = pixelToPercentHeight(GetImageHeight(optionInterface.imageMusicAndSoundJauge))
+	
+	coorXSprite = GetSpriteX(optionInterface.spriteMusicBar) + 3.4
+	coorYSprite = GetSpriteY(optionInterface.spriteMusicBar) + 6.7
+	
+	SetSpriteSize(optionInterface.spriteMusicJauge, -1, heightSprite)
+	SetSpritePosition(optionInterface.spriteMusicJauge, coorXSprite, coorYSprite)
+	// On règle le scale avec le volume présent dans le fichier
+	scale = volumeMusic / 100
+	SetSpriteScale(optionInterface.spriteMusicJauge, scale, 1)
+	
+	// Sprite de la jauge de son
+	coorXSprite = GetSpriteX(optionInterface.spriteSoundBar) + 3.4
+	coorYSprite = GetSpriteY(optionInterface.spriteSoundBar) + 6.7
+	
+	SetSpriteSize(optionInterface.spriteSoundJauge, -1, heightSprite)
+	SetSpritePosition(optionInterface.spriteSoundJauge, coorXSprite, coorYSprite)
+	// On règle le scale avec le volume présent dans le fichier
+	scale = volumeSound / 100
+	SetSpriteScale(optionInterface.spriteSoundJauge, scale, 1)
+endfunction
+
+// Déchargement des sprites, images et boutons
+function dechargedAllImagesOption()
+	dechargerButtonsOptions()
+	
+	DeleteSprite(optionInterface.spriteMusicBar)
+	DeleteSprite(optionInterface.spriteMusicJauge)
+	DeleteSprite(optionInterface.spriteSoundBar)
+	DeleteSprite(optionInterface.spriteSoundJauge)
+	
+	DeleteImage(optionInterface.imageMusicAndSoundJauge)
+	DeleteImage(optionInterface.imageMusicBar)
+	DeleteImage(optionInterface.imageSoundBar)
+endfunction
+
+// Permet de décharger les boutons virtuels
+function dechargerButtonsOptions()
+	DeleteImage(optionInterface.imageExitButton)
+	
+	DeleteVirtualButton(optionInterface.exitButton)
 endfunction

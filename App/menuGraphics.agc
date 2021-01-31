@@ -40,14 +40,11 @@ global menuInterface as GraphicsMenu
 // Affiche l'écran d'accueil et démarre la musique
 // d'écran d'accueil
 function afficherAccueil()
-	// On charge la musique d'accueil
-	chargerMusiqueAccueil()
-	
 	// On charge l'écran d'accueil
 	chargerSpriteAccueil()
 	
 	// On charge les boutons de l'accueil
-	chargedAndPositionedBoutons()
+	chargedAndPositionedBoutonsMenu()
 endfunction
 
 function chargerSpriteAccueil()
@@ -63,7 +60,7 @@ function chargerSpriteAccueil()
 	SetSpriteSize(menuInterface.spriteAccueil,100,-1)
 endfunction
 
-function chargedAndPositionedBoutons()
+function chargedAndPositionedBoutonsMenu()
 	menuInterface.playButton = 1
 	
 	menuInterface.optionsButton = 2
@@ -90,7 +87,7 @@ function chargedAndPositionedBoutons()
 	SetVirtualButtonImageDown(menuInterface.exitButton, menuInterface.imageExitButton)
 endfunction
 
-function dechargerButtons()
+function dechargerButtonsMenu()
 	DeleteImage(menuInterface.imageOptionButton)
 	DeleteImage(menuInterface.imageExitButton)
 	DeleteImage(menuInterface.imagePlayButton )
@@ -109,7 +106,7 @@ function dechargerSpritesAccueil()
 	DeleteImage(menuInterface.imageExitButton)
 	
 	// On supprime les boutons
-	dechargerButtons()
+	dechargerButtonsMenu()
 endfunction
 
 // Charge l'image d'accueil
