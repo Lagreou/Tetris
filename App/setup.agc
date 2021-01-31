@@ -25,6 +25,7 @@ global xScreen as float
 global yScreen as float
 global xSpace as float
 global deviceRunOn as string
+global displayFile as integer
 
 // =================================================================== //
 // ================ FIN VARIABLES GLOBALES ========================== //
@@ -58,41 +59,6 @@ initXSpace()
 
 endfunction
 
-// Permet d'initialiser l'espace entre les blocs selon
-// le format d'écran
-function initXSpace()
-
-	// Définition de l'espace entre les blocks (espace horizontal) suivant
-	// le format d'écran
-	
-	// ============================================================== //
-	// =============== FORMAT 16/9 ================================== //
-	//============================================================== //           
-	if( xScreen/16 = yScreen/9)
-		xSpace = 2.55
-	endif
-	
-	
-	// ============================================================== //
-	// =============== FORMAT 4/3 ================================== //
-	//============================================================== //   
-	if( xScreen/4 = yScreen/3)
-		xSpace = 3.8
-	endif
-	
-	
-	// ============================================================== //
-	// ==================== INTEGRATION VERSION MOBILE ============== //
-	// ============================================================== //
-	
-	// ============================================================== //
-	// =============== FORMAT 9/19.5 ================================== //
-	//============================================================== //  
-	
-	if( xScreen/9  = yScreen/19.5)
-		xSpace = 9.8
-	endif
-endfunction
 
 /* =================================================
 					MUSIQUES / SONS
@@ -202,3 +168,99 @@ function pixelToPercentHeight(pixel as float)
 	height = 100.0 / GetDeviceHeight() * pixel
 	
 endfunction height
+
+function chargingDeviceDisplayFile()
+	deviceName as string
+	
+	deviceName = GetDeviceName()
+	
+	select deviceName
+		
+		case "android"
+			displayFile = OpenToRead("readingFiles/androidDisplay.datagames")
+		endcase
+		
+		case "windows"
+			displayFile = OpenToRead("readingFiles/windowsDisplay.datagames")
+		endcase
+	
+	endselect
+	
+	// fonction de chargement des différentes valeurs
+	initXSpace()
+endfunction
+
+// Permet d'initialiser l'espace entre les blocs selon
+// le format d'écran
+function initXSpace()
+	
+	// Représente la ligne courante
+	currentLine as string
+ 
+	while(FileEOF(displayFile))
+		currentLine = ReadLine(displayFile)
+		
+		if(currentLine = "X_SPACE")
+			// On parcours les diverses résolutions jusqu'à la fin de la catégorie
+			xSpace = getValueWithCategorieParcour("X_SPACE")
+		endif
+	// Définition de l'espace entre les blocks (espace horizontal) suivant
+	// le format d'écran
+	endwhile
+	// ============================================================== //
+	// =============== FORMAT 16/9 ================================== //
+	//============================================================== //           
+	if( xScreen/16 = yScreen/9)
+		xSpace = 2.55
+	endif
+	
+	
+	// ============================================================== //
+	// =============== FORMAT 4/3 ================================== //
+	//============================================================== //   
+	if( xScreen/4 = yScreen/3)
+		xSpace = 3.8
+	endif
+	
+	
+	// ============================================================== //
+	// ==================== INTEGRATION VERSION MOBILE ============== //
+	// ============================================================== //
+	
+	// ============================================================== //
+	// =============== FORMAT 9/19.5 ================================== //
+	//============================================================== //  
+	
+	if( xScreen/9  = yScreen/19.5)
+		xSpace = 9.8
+	endif
+endfunction
+
+// Parcours des résolution d'affichage jusqu'à la fin
+// de la catégorie entrée en paramètre.
+// La valeur de la variable est retournée lorsque trouvée
+function getValueWithCategorieParcour(categorie as string)
+	currentLine as string
+	obtaindValue as float
+	
+	repeat
+		currentLine = ReadLine(displayFile)
+		
+		// On regarde si la valeur correspond à une resolution
+		if(Left(currentLine, 2) = "~~")
+			// si ok => on récupère et on regarde si correspond avec actuelle
+			// si correspond avec actuelle => on récupère la valeur
+		endif
+	until(not isCategorieEnding(currentLine))
+endfunction obtaindValue
+
+// Permet de regarder si on arrive à la fin d'une
+// catégorie dans le fichier
+function isCategorieEnding(line as string)
+	result as integer = 0
+	
+	if(Left(line,1) = "#")
+		result = 1
+	endif
+	
+endfunction result
