@@ -63,10 +63,12 @@ FILE_12=optionsGraphics.agc;-1
 FILE_13=optionInputs.agc;-1
 
 [files]
-FILE_NAME_0=0;game.agc;0;0
-FILE_NAME_1=0;gameGraphics.agc;0;1
-FILE_NAME_2=0;gameMenu.agc;0;2
-FILE_NAME_3=1;optionInputs.agc;1746;3
+FILE_NAME_0=0;main.agc;699;5
+FILE_NAME_1=1;setup.agc;5211;4
+FILE_NAME_2=0;game.agc;0;0
+FILE_NAME_3=0;gameGraphics.agc;0;1
+FILE_NAME_4=0;gameMenu.agc;0;2
+FILE_NAME_5=0;optionInputs.agc;147;3
 
 [project]
 description=

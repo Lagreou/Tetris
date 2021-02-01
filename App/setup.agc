@@ -55,8 +55,14 @@ SetScissor( 0,0,0,0 ) // use the maximum available screen space, no black border
 UseNewDefaultFonts( 1 ) // since version 2.0.22 we can use nicer default fonts
 
 // On regarde sur quel machine on execute
-initXSpace()
+// et on charge le fichier adéquat pour les résolutions
+chargingDeviceDisplayFile()
 
+// Chargement de la variable xSpace
+initTargetValue("#X_SPACE")
+	
+// On ferme le fichier
+CloseFile(displayFile)
 endfunction
 
 
@@ -169,6 +175,8 @@ function pixelToPercentHeight(pixel as float)
 	
 endfunction height
 
+// Charger le bon fichier contenant les résolutions selon
+// l'appareil sur lequel le jeu est chargé
 function chargingDeviceDisplayFile()
 	deviceName as string
 	
@@ -185,73 +193,45 @@ function chargingDeviceDisplayFile()
 		endcase
 	
 	endselect
-	
-	// fonction de chargement des différentes valeurs
-	initXSpace()
 endfunction
 
-// Permet d'initialiser l'espace entre les blocs selon
-// le format d'écran
-function initXSpace()
+// Permet d'initialiser la variable recherchée
+function initTargetValue(targetValue as string)
 	
 	// Représente la ligne courante
 	currentLine as string
  
-	while(FileEOF(displayFile))
+	while(not FileEOF(displayFile))
 		currentLine = ReadLine(displayFile)
 		
-		if(currentLine = "X_SPACE")
+		if(currentLine = targetValue)
 			// On parcours les diverses résolutions jusqu'à la fin de la catégorie
-			xSpace = getValueWithCategorieParcour("X_SPACE")
+			xSpace = getValueWithCategorieParcour()
 		endif
-	// Définition de l'espace entre les blocks (espace horizontal) suivant
-	// le format d'écran
 	endwhile
-	// ============================================================== //
-	// =============== FORMAT 16/9 ================================== //
-	//============================================================== //           
-	if( xScreen/16 = yScreen/9)
-		xSpace = 2.55
-	endif
-	
-	
-	// ============================================================== //
-	// =============== FORMAT 4/3 ================================== //
-	//============================================================== //   
-	if( xScreen/4 = yScreen/3)
-		xSpace = 3.8
-	endif
-	
-	
-	// ============================================================== //
-	// ==================== INTEGRATION VERSION MOBILE ============== //
-	// ============================================================== //
-	
-	// ============================================================== //
-	// =============== FORMAT 9/19.5 ================================== //
-	//============================================================== //  
-	
-	if( xScreen/9  = yScreen/19.5)
-		xSpace = 9.8
-	endif
 endfunction
 
 // Parcours des résolution d'affichage jusqu'à la fin
-// de la catégorie entrée en paramètre.
+// de la catégorie en cours de parcours
 // La valeur de la variable est retournée lorsque trouvée
-function getValueWithCategorieParcour(categorie as string)
+function getValueWithCategorieParcour()
 	currentLine as string
 	obtaindValue as float
-	
+	isGoodResolution as integer
+		
 	repeat
 		currentLine = ReadLine(displayFile)
 		
 		// On regarde si la valeur correspond à une resolution
 		if(Left(currentLine, 2) = "~~")
 			// si ok => on récupère et on regarde si correspond avec actuelle
+			isGoodResolution = comparerResolutionActuelleAvecFichier(currentLine)
 			// si correspond avec actuelle => on récupère la valeur
+			if(isGoodResolution)
+				obtaindValue = ValFloat(ReadLine(displayFile))
+			endif
 		endif
-	until(not isCategorieEnding(currentLine))
+	until(isCategorieEnding(currentLine) or FileEOF(displayFile))
 endfunction obtaindValue
 
 // Permet de regarder si on arrive à la fin d'une
@@ -264,3 +244,44 @@ function isCategorieEnding(line as string)
 	endif
 	
 endfunction result
+
+// Permet de comparer la résolution sur laquelle on est
+// dans le fichier (ligne passée en paramètre)
+// retourne vrai si c'est la bonne résolution
+function comparerResolutionActuelleAvecFichier(resolution as string)
+	isOk as integer = 0
+	currentLine as string
+	displayValues as float[2]
+	i as integer 
+	
+	currentLine = resolution
+	
+	// On regarde qu'on à bien un / (si = 0, il n'y a obligatoirement
+	// pas de caractère "/", alors que oui si > 0)
+	// On récupère les valeurs si ok
+	if(CountStringTokens2(currentLine, "/") > 0)
+		// On élimine le symbole ~~ afin qu'il ne gêne pas pour
+		// la récupération de la première valeur
+		// => On récupère tous les caractère de droite - les 2 premiers
+		currentLine = Right(currentLine, len(currentLine) - 2)
+		for i = 1 to 2 step 1
+			displayValues[i] = ValFloat(GetStringToken(currentLine,"/",i))
+		next i 
+	endif
+	
+	// On compare les valeurs extraites
+	// avec notre résolution
+	// dans le fichier, c'est forcément l'ordre longueur / largeur
+	// (le plus grand on premier), c'est pour cela qu'on regarde si
+	// la largeur de l'écran est plus grande que la hauteur)
+	if(xScreen > yScreen)
+		if(xScreen/displayValues[1] = yScreen/displayValues[2])
+			isOk = 1
+		endif
+	else
+		if(yScreen/displayValues[1] = xScreen/displayValues[2])
+			isOk = 1
+		endif
+	endif
+	 
+endfunction isOk
