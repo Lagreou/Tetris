@@ -65,19 +65,18 @@ do
 			if isAccueilCharged
 				interceptClickedButton()
 			else
+				isAccueilCharged = 1
+				
 				if(isGameCharged)
 					goToAccueilFromGame()
-					isAccueilCharged = 1
 					isGameCharged = 0
 				elseif(isOptionCharged)
 					goToMenuFromOption()
-					isAccueilCharged = 1
 					isOptionCharged = 0
 				elseif(isGameLauch)
 					afficherAccueil()
 					// On charge la musique d'accueil
 					chargerMusiqueAccueil()
-					isAccueilCharged = 1
 					isGameLauch = 0
 				endif
 			endif

@@ -54,8 +54,9 @@ type GraphicsElementGameInterface
 
 	// Taille des blocks tetris, à adapter selon l'affichage
 	tailleBlock as float // => en px
-	tailleBlocPourcent as float // => en %
-
+	tailleBlocLargeurPourcent as float // => en %
+	tailleBlocHauteurPourcent as float
+	
 	// sprite du background du jeu
 	spriteBackground as integer
 
@@ -410,21 +411,35 @@ endfunction tabImage
 // Initialise la taille des blocs du tetris
 // selon l'affichage
 function initBlocSize()
-	graphicsGameElements.tailleBlock = yScreen / GRID_Y
-	graphicsGameElements.tailleBlocPourcent = graphicsGameElements.tailleBlock * 100/yScreen
+	largeurArene as float
+	
+	// On définit la taille de l'arène
+	if(yScreen >= (xScreen / 1.5 / GRID_X) * GRID_Y)
+		largeurArene = pixelToPercentWidth(xScreen/1.5)
+	else
+		largeurArene = pixelToPercentWidth(xScreen/4) 
+	endif
+	
+	// On calcul le % en largeur pour un bloc
+	graphicsGameElements.tailleBlocLargeurPourcent = largeurArene / GRID_X
+	
+	// On calcul combien de pixel fait un bloc
+	graphicsGameElements.tailleBlock = percentToPixelWidth(graphicsGameElements.tailleBlocLargeurPourcent)
+	
+	// On calcul combien de % fait un bloc en hauteur
+	graphicsGameElements.tailleBlocHauteurPourcent = pixelToPercentHeight(graphicsGameElements.tailleBlock)
 endfunction
 
 // Genere les sprites pour chaque colonne et rang de block
 function createBlockSprites()
 	count as integer = 1
-	tailleBlocPourcent as float
 	y as integer
 	x as integer
 	
 	for y = 1 to GRID_Y
 		for x = 1 to GRID_X
 			CreateSprite(count, blocksPicture.imageArray[0])
-			SetSpriteSize(count, -1, tailleBlocPourcent)
+			SetSpriteSize(count, graphicsGameElements.tailleBlocLargeurPourcent, -1)
 			inc count
 		next x
 	next y
@@ -452,11 +467,11 @@ function updateGridBlocks()
 	y as integer
 	x as integer
 	
-	for y = 0 to GRID_Y - 1
-		for x = 0 to GRID_X - 1
+	for y = 1 to GRID_Y 
+		for x = 1 to GRID_X
 			SetSpriteVisible(count, 1)
 			
-			select game.dataGrid.grid[x+1, y+1]
+			select game.dataGrid.grid[x, y]
 				case 0
 					SetSpriteVisible(count,0)
 				endcase
@@ -484,8 +499,9 @@ function updateGridBlocks()
 			endselect
 			
 			SetSpriteImage(count,image)
-			SetSpriteSize(count, -1, graphicsGameElements.tailleBlocPourcent)
-			SetSpritePosition(count, x*xSpace + graphicsGameElements.xOffset, y*graphicsGameElements.tailleBlocPourcent+graphicsGameElements.yOffset)
+			
+			SetSpriteSize(count, graphicsGameElements.tailleBlocLargeurPourcent, graphicsGameElements.tailleBlocHauteurPourcent)
+			SetSpritePosition(count, graphicsGameElements.tailleBlocLargeurPourcent*x, graphicsGameElements.tailleBlocHauteurPourcent*y)
 			inc count
 		next x
 	next y
@@ -496,7 +512,8 @@ endfunction
 // barres...
 function initOffset()
 	graphicsGameElements.xOffset = ((xScreen - GRID_X * graphicsGameElements.tailleBlock) / 2)*100/xScreen
-	graphicsGameElements.yOffset = (yScreen - GRID_Y * graphicsGameElements.tailleBlock)*100/yScreen
+	graphicsGameElements.yOffset = 0
+	//~ graphicsGameElements.yOffset = (yScreen - GRID_Y * graphicsGameElements.tailleBlock)*100/yScreen
 endfunction
 
 // Affichage du game over
@@ -514,7 +531,7 @@ function displayGameOver()
 
 	for y=1 to GRID_Y
 		for x=1 to GRID_X
-			setspritesize(count,graphicsGameElements.tailleBlock,graphicsGameElements.tailleBlock)
+			setspritesize(count,graphicsGameElements.tailleBlocLargeurPourcent,graphicsGameElements.tailleBlocHauteurPourcent)
 			SetSpritePhysicsOn(count,2)
 			SetSpritePhysicsVelocity(count,random(-500,1000),random(-500,1000))
 			SetSpriteShape(count,2)

@@ -180,7 +180,7 @@ endfunction height
 function chargingDeviceDisplayFile()
 	deviceName as string
 	
-	deviceName = GetDeviceName()
+	deviceName = GetDeviceBaseName()
 	
 	select deviceName
 		
