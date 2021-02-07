@@ -57,6 +57,9 @@ type GraphicsElementGameInterface
 	tailleBlocLargeurPourcent as float // => en %
 	tailleBlocHauteurPourcent as float
 	
+	// Largeur de l'arène calculée par rapport à l'écran
+	largeurArene as float
+	
 	// sprite du background du jeu
 	spriteBackground as integer
 
@@ -411,17 +414,10 @@ endfunction tabImage
 // Initialise la taille des blocs du tetris
 // selon l'affichage
 function initBlocSize()
-	largeurArene as float
-	
-	// On définit la taille de l'arène
-	if(yScreen >= (xScreen / 1.5 / GRID_X) * GRID_Y)
-		largeurArene = pixelToPercentWidth(xScreen/1.5)
-	else
-		largeurArene = pixelToPercentWidth(xScreen/4) 
-	endif
+	definirLargeurArene()
 	
 	// On calcul le % en largeur pour un bloc
-	graphicsGameElements.tailleBlocLargeurPourcent = largeurArene / GRID_X
+	graphicsGameElements.tailleBlocLargeurPourcent = graphicsGameElements.largeurArene / GRID_X
 	
 	// On calcul combien de pixel fait un bloc
 	graphicsGameElements.tailleBlock = percentToPixelWidth(graphicsGameElements.tailleBlocLargeurPourcent)
@@ -439,7 +435,7 @@ function createBlockSprites()
 	for y = 1 to GRID_Y
 		for x = 1 to GRID_X
 			CreateSprite(count, blocksPicture.imageArray[0])
-			SetSpriteSize(count, graphicsGameElements.tailleBlocLargeurPourcent, -1)
+			SetSpriteSize(count, graphicsGameElements.tailleBlocLargeurPourcent, graphicsGameElements.tailleBlocHauteurPourcent)
 			inc count
 		next x
 	next y
@@ -499,9 +495,9 @@ function updateGridBlocks()
 			endselect
 			
 			SetSpriteImage(count,image)
-			
 			SetSpriteSize(count, graphicsGameElements.tailleBlocLargeurPourcent, graphicsGameElements.tailleBlocHauteurPourcent)
-			SetSpritePosition(count, graphicsGameElements.tailleBlocLargeurPourcent*x, graphicsGameElements.tailleBlocHauteurPourcent*y)
+			
+			SetSpritePosition(count, graphicsGameElements.tailleBlocLargeurPourcent*x + graphicsGameElements.xOffset, graphicsGameElements.tailleBlocHauteurPourcent*y + graphicsGameElements.yOffset)
 			inc count
 		next x
 	next y
@@ -511,7 +507,7 @@ endfunction
 // Permet d'initialiser les coordonnées d'affichage des blocs,
 // barres...
 function initOffset()
-	graphicsGameElements.xOffset = ((xScreen - GRID_X * graphicsGameElements.tailleBlock) / 2)*100/xScreen
+	graphicsGameElements.xOffset = 35
 	graphicsGameElements.yOffset = 0
 	//~ graphicsGameElements.yOffset = (yScreen - GRID_Y * graphicsGameElements.tailleBlock)*100/yScreen
 endfunction
@@ -546,4 +542,17 @@ function displayGameOver()
 	
 	deleteScoreDisplay()
 	deleteLevelDisplay()
+endfunction
+
+// Définit la largeur de l'arène grâce au facteur x
+//
+function definirLargeurArene()
+	factor as integer = 1
+	
+	// On definit la largeur de l'arene
+	while(yScreen < (xScreen / factor / GRID_X) * GRID_Y)
+		factor = factor + 1
+		graphicsGameElements.largeurArene = pixelToPercentWidth(xScreen/factor)
+	endwhile
+	
 endfunction
