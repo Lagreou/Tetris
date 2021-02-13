@@ -107,16 +107,16 @@ function checkBelowShape(dataGrid ref as dataGridGame, currentShape as TetrisSha
 	
 	// Ici, les différents y représentent les blocks potentiellements "bloquant"
 	// pour les différents points de collision de la figure
-	if checky1 <> 0 and dataGrid.moveShapeY + checky1 <= 22
+	if checky1 <> 0 and dataGrid.moveShapeY + checky1 <= GRID_Y
 		y1 = dataGrid.grid[dataGrid.moveShapeX, dataGrid.moveShapeY+checky1]
 	endif
-	if checky2 <> 0 and dataGrid.moveShapeY + checky2 <= 22
+	if checky2 <> 0 and dataGrid.moveShapeY + checky2 <= GRID_Y
 		y2 = dataGrid.grid[dataGrid.moveShapeX+1, dataGrid.moveShapeY+checky2]
 	endif
-	if checky3 <> 0 and dataGrid.moveShapeY + checky3 <= 22
+	if checky3 <> 0 and dataGrid.moveShapeY + checky3 <= GRID_Y
 		y3 = dataGrid.grid[dataGrid.moveShapeX+2, dataGrid.moveShapeY+checky3]
 	endif
-	if checky4 <> 0 and dataGrid.moveShapeY + checky4 <= 22
+	if checky4 <> 0 and dataGrid.moveShapeY + checky4 <= GRID_Y
 		y4 = dataGrid.grid[dataGrid.moveShapeX+3, dataGrid.moveShapeY+checky4]
 	endif
 	
@@ -165,7 +165,7 @@ function determinateDirection(shape as tetrisShape, dataGrid as dataGridGame)
 				if(trouver = 0)	
 					inc colonne
 				endif			
-			until(colonne > 4 or trouver = 1 or dataGrid.moveShapeX + colonne - 1 > 10)
+			until(colonne > 4 or trouver = 1 or dataGrid.moveShapeX + colonne - 1 > GRID_X)
 			
 			if(trouver = 0)
 				inc ligne
@@ -213,7 +213,7 @@ for ligne = 1 to 4
 	for colonne = 1 to 4
 		// On regarde si tabCollision = vrai à l'indice donné et si la case lui correspondant dans la grille de jeu
 		// est déja prise par un bloc
-		if(dataGrid.moveShapeX + colonne -1 >= 1 and dataGrid.moveShapeX + colonne -1 <= 10)
+		if(dataGrid.moveShapeX + colonne -1 >= 1 and dataGrid.moveShapeX + colonne -1 <= GRID_X)
 			if(tabCollision[ligne,colonne] = 1 and dataGrid.grid[dataGrid.moveShapeX + colonne - 1, dataGrid.moveShapeY + ligne - 1] <> 0)
 				if(not isSameShape(dataGrid, shape))
 					isColide = 1
@@ -278,7 +278,7 @@ function isRightColideAfterMove(shape as tetrisShape, tabCollision as integer[][
 		for colonne = 1 to 4
 			// On regarde si le bloc dépasse du tableau :
 			// auquel cas il faut compter le bloc si présent
-			if(dataGrid.moveShapeX + colonne -1 >= 1 and dataGrid.moveShapeX + colonne -1 <= 10)
+			if(dataGrid.moveShapeX + colonne -1 >= 1 and dataGrid.moveShapeX + colonne -1 <= GRID_X)
 				// On regarde si tabCollision = vrai à l'indice donné et si la case lui correspondant dans la grille de jeu
 				// est déja prise par un bloc
 				if(tabCollision[ligne,colonne] = 1 and dataGrid.grid[dataGrid.moveShapeX + colonne - 1, dataGrid.moveShapeY + ligne - 1] <> 0)
@@ -331,7 +331,7 @@ function isLeftColideAfterMove(shape as tetrisShape, tabCollision as integer[][]
 		for colonne = 1 to 4
 			// On regarde si tabCollision = vrai à l'indice donné et si la case lui correspondant dans la grille de jeu
 			// est déja prise par un bloc
-			if(dataGrid.moveShapeX + colonne -1 >= 1 and dataGrid.moveShapeX + colonne -1 <= 10)
+			if(dataGrid.moveShapeX + colonne -1 >= 1 and dataGrid.moveShapeX + colonne -1 <= GRID_X)
 				if(tabCollision[ligne,colonne] = 1 and dataGrid.grid[dataGrid.moveShapeX + colonne - 1, dataGrid.moveShapeY + ligne - 1] <> 0)
 					inc nbColision 
 				endif

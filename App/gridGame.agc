@@ -14,8 +14,9 @@
 //=================================================//
 
 // Définition de l'espace de jeu : 10 colonnes et 22 rangs
-#constant GRID_X = 10
-#constant GRID_Y = 22
+// on compte les 2 colonnes invisibles et la ligne invisible du bas
+#constant GRID_X = 12
+#constant GRID_Y = 23
 
 
 //=================================================//
@@ -107,8 +108,8 @@ function isSameShape(dataGrid as dataGridGame, currentShape as TetrisShape)
 	// regarde si il y'a correspondance avec notre figure
 	for i = 1 to 4
 		for j = 1 to 4
-			if(dataGrid.moveShapeX + j - 1 <= 10 and dataGrid.moveShapeX + j - 1 >= 1)
-				if (dataGrid.moveShapeY + i - 1 <= 16 and dataGrid.moveShapeY + i - 1 >= 1)
+			if(dataGrid.moveShapeX + j - 1 <= GRID_X and dataGrid.moveShapeX + j - 1 >= 1)
+				if (dataGrid.moveShapeY + i - 1 <= GRID_Y and dataGrid.moveShapeY + i - 1 >= 1)
 					blocInspect = dataGrid.grid[dataGrid.moveShapeX + j - 1, dataGrid.moveShapeY + i - 1]
 					shapeBloc = Val(mid(currentShape.rotation[currentShape.moveShapeRotation, i], j, 1))
 				endif

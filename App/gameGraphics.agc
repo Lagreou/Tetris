@@ -118,6 +118,9 @@ function displayGameInterface()
 	// On créer les colonnes gauche / droite et la ligne du bas
 	createBlockSprites()
 	
+	// On update la grille
+	updateGridBlocks()
+	
 	// On charge tout ce qui a attrait à l'interface
 	chargingGameInterface()
 	
@@ -256,16 +259,26 @@ endfunction
 // Permet de placer les barres ainsi que d'ajuster
 // la taille selon l'écran
 function createAndPlacedBars()
+	xPosition as float
+	yPosition as float
+	xSize as float
+	ySize as float
 	
-	SetSpriteSize(graphicsGameElements.spriteLeftBar, -1, 100)
-	SetSpriteSize(graphicsGameElements.spriteRightBar, -1, 100)
-	SetSpriteSize(graphicsGameElements.spriteTopBar, 25.5, -1)
-	SetSpriteSize(graphicsGameElements.spriteBottomBar, 25.5, -1)
+	// Barre gauche => taille + placement
+	SetSpriteSize(graphicsGameElements.spriteLeftBar, -1, graphicsGameElements.tailleBlocHauteurPourcent*GRID_Y - graphicsGameElements.tailleBlocHauteurPourcent)
+	SetSpritePosition(graphicsGameElements.spriteLeftBar, getSpriteX(1) + graphicsGameElements.tailleBlocLargeurPourcent, getSpriteY(1))
 	
-	SetSpritePosition(graphicsGameElements.spriteLeftBar, graphicsGameElements.xOffset, 0)
-	SetSpritePosition(graphicsGameElements.spriteRightBar, 62.5, 0)
-	SetSpritePosition(graphicsGameElements.spriteTopBar, graphicsGameElements.xOffset, graphicsGameElements.yOffset)
-	SetSpritePosition(graphicsGameElements.spriteBottomBar, graphicsGameElements.xOffset, 99.5)
+	// Barre droite => taille + placement
+	SetSpriteSize(graphicsGameElements.spriteRightBar, -1, graphicsGameElements.tailleBlocHauteurPourcent*GRID_Y - graphicsGameElements.tailleBlocHauteurPourcent)
+	SetSpritePosition(graphicsGameElements.spriteRightBar, getSpriteX(GRID_X), getSpriteY(GRID_X))
+	
+	// Barre haut => taille + placement
+	SetSpriteSize(graphicsGameElements.spriteTopBar, graphicsGameElements.largeurArene, -1)
+	SetSpritePosition(graphicsGameElements.spriteTopBar, getSpriteX(1), getSpriteY(1))
+	
+	// Barre bas => taille + placement
+	SetSpriteSize(graphicsGameElements.spriteBottomBar, graphicsGameElements.largeurArene - (2*graphicsGameElements.tailleBlocLargeurPourcent), -1)
+	SetSpritePosition(graphicsGameElements.spriteBottomBar, getSpriteX(GRID_X * GRID_Y-10), getSpriteY(GRID_X * GRID_Y-10))
 endfunction
 
 // Permet de placer les divers cadres (figure, niveau, score...)
@@ -460,12 +473,19 @@ endfunction
 function updateGridBlocks()
 	count as integer = 1
 	image as integer
+	blocPositionX as float
+	blocPositionY as float
 	y as integer
 	x as integer
 	
 	for y = 1 to GRID_Y 
 		for x = 1 to GRID_X
-			SetSpriteVisible(count, 1)
+			
+			// On ne veux pas que la première et dernière colonne
+			// soient visible, ni la dernière ligne !
+			if( x > 1 AND x < GRID_X  AND y < GRID_Y)
+				SetSpriteVisible(count, 1)
+			endif
 			
 			select game.dataGrid.grid[x, y]
 				case 0
@@ -497,7 +517,11 @@ function updateGridBlocks()
 			SetSpriteImage(count,image)
 			SetSpriteSize(count, graphicsGameElements.tailleBlocLargeurPourcent, graphicsGameElements.tailleBlocHauteurPourcent)
 			
-			SetSpritePosition(count, graphicsGameElements.tailleBlocLargeurPourcent*x + graphicsGameElements.xOffset, graphicsGameElements.tailleBlocHauteurPourcent*y + graphicsGameElements.yOffset)
+			// Calcule des positions
+			blocPositionX = graphicsGameElements.xOffset + (graphicsGameElements.tailleBlocLargeurPourcent*x-1)
+			blocPositionY = graphicsGameElements.yOffset + (graphicsGameElements.tailleBlocHauteurPourcent*y-1)
+			
+			SetSpritePosition(count, blocPositionX , blocPositionY)
 			inc count
 		next x
 	next y
@@ -507,8 +531,11 @@ endfunction
 // Permet d'initialiser les coordonnées d'affichage des blocs,
 // barres...
 function initOffset()
-	graphicsGameElements.xOffset = 35
-	graphicsGameElements.yOffset = 0
+	// Ici, le calcule est déduit comme cela : on veux que l'arène soit à la moitié
+	// de l'écran, le premier bloc sera donc à la moitié de l'arène moins la taille
+	// de la moitié des blocs totaux en largeur
+	graphicsGameElements.xOffset = 50 - (GRID_X / 2 * graphicsGameElements.tailleBlocLargeurPourcent)
+	graphicsGameElements.yOffset = 50 - (GRID_Y / 2 * graphicsGameElements.tailleBlocHauteurPourcent)
 	//~ graphicsGameElements.yOffset = (yScreen - GRID_Y * graphicsGameElements.tailleBlock)*100/yScreen
 endfunction
 
@@ -547,11 +574,11 @@ endfunction
 // Définit la largeur de l'arène grâce au facteur x
 //
 function definirLargeurArene()
-	factor as integer = 1
+	factor as float = 0.2
 	
 	// On definit la largeur de l'arene
 	while(yScreen < (xScreen / factor / GRID_X) * GRID_Y)
-		factor = factor + 1
+		factor = factor + 0.2
 		graphicsGameElements.largeurArene = pixelToPercentWidth(xScreen/factor)
 	endwhile
 	

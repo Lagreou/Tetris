@@ -63,15 +63,9 @@ FILE_12=optionsGraphics.agc;-1
 FILE_13=optionInputs.agc;-1
 
 [files]
-FILE_NAME_0=0;main.agc;4744;4
-FILE_NAME_1=0;tetrisShape.agc;0;8
-FILE_NAME_2=0;gridGame.agc;0;6
-FILE_NAME_3=0;checkingShape.agc;0;7
-FILE_NAME_4=0;setup.agc;1781;3
-FILE_NAME_5=1;gameGraphics.agc;17713;0
-FILE_NAME_6=0;gameMenu.agc;0;1
-FILE_NAME_7=0;menuGraphics.agc;1641;5
-FILE_NAME_8=0;optionInputs.agc;147;2
+FILE_NAME_0=0;main.agc;4798;2
+FILE_NAME_1=0;game.agc;0;0
+FILE_NAME_2=1;gameGraphics.agc;20197;1
 
 [project]
 description=
