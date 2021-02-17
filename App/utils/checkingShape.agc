@@ -194,6 +194,7 @@ endfunction direction
 // ==================== METHODES "PRIVES" SERVANT UNIQUEMENT AUX FONCTIONS AU DESSUS ========== //
 // ============================================================================================ //
 
+// Fonction permettant de dire si la figure actuel va cogner une autre figure
 function isShapeColideOther(shape as tetrisShape, dataGrid as dataGridGame, tabCollision as integer[][])
 
 // ================ DECLARATIONS =================
@@ -225,6 +226,8 @@ next ligne
 
 endfunction isColide
 
+// Permet de savoir si la figure va cogner une autre figure
+// à droite (en tournant)
 function isColideAtRight(shape as tetrisShape, colonne as integer)
 	
 	isColide as integer = 0
@@ -233,7 +236,7 @@ function isColideAtRight(shape as tetrisShape, colonne as integer)
 	tabCol as integer[2]
 	
 	// ================= INSTRUCTIONS =====================	
-	tabCol = determinerColonnes(shape)
+	tabCol = determinateFirstAndLastColumns(shape)
 	
 	if(tabCol[1] <> tabCol[2] and colonne >= tabCol[2])
 		isColide = 1
@@ -242,6 +245,8 @@ function isColideAtRight(shape as tetrisShape, colonne as integer)
 	endif
 endfunction isColide
 
+// Permet de savoir si la figure va cogner une autre figure à
+// gauche (en tournant)
 function isColideAtLeft(shape as tetrisShape, colonne as integer)	
 	
 	isColide as integer = 0
@@ -250,7 +255,7 @@ function isColideAtLeft(shape as tetrisShape, colonne as integer)
 	tabCol as integer[2]
 	
 	// ================= INSTRUCTIONS =====================	
-	tabCol = determinerColonnes(shape)
+	tabCol = determinateFirstAndLastColumns(shape)
 	
 	if(tabCol[1] <> tabCol[2] and colonne <= tabCol[2])
 		isColide = 1

@@ -5,7 +5,7 @@
 // Fonction qui détecte le clic sur une des barres
 // de son.
 // Renvoi l'image sur lequel l'utilisateur a cliquer
-function detecterClicSurImageSon()
+function detectClicOnSoundImage()
 	
 	spriteClickedOnId as integer
 	
@@ -83,7 +83,7 @@ endfunction isOnSprite
 // quand l'utilisateur bouge la souris
 // Le scaleInit permet de donner la taille initiale
 // retourne le nouveau scale de jauge
-function bougerJauge(sprite as integer, defaultScale as float)
+function moveJauge(sprite as integer, defaultScale as float)
 	// Coordonnées de la souris au moment
 	// du clic
 	tabMouseX as float

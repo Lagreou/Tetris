@@ -2,7 +2,7 @@
 // Descent les lignes au dessus de cette dernière
 // Recherche encore des lignes à descendre
 // Répéter tant que tout n'est pas fini
-function effacerLignes()
+function deleteLines()
 	
 	// nombre de lignes à effacer
 	lineNumbToDelete as integer
@@ -16,7 +16,7 @@ function effacerLignes()
 	movey as integer
 	xline as integer
 	
-	lineNumbToDelete = regarderLignes(game.dataGrid, linesToDelete)
+	lineNumbToDelete = calculateNumberOfDeleteLines(game.dataGrid, linesToDelete)
 	
 	if lineNumbToDelete = 1
 		// On met à jour le score
@@ -42,7 +42,7 @@ function effacerLignes()
 			
 			playsound(deleteLineSound)
 			
-			regarderLignes(game.dataGrid, linesToDelete)
+			calculateNumberOfDeleteLines(game.dataGrid, linesToDelete)
 			lineNumber = GRID_Y-1
 		else
 			dec lineNumber
@@ -55,7 +55,7 @@ endfunction
 // On regarde si les lignes sont remplies de blocks
 // Modifie directement le tableau contenant le marquage des lignes a effacer
 // et retourne le nombre de lignes qui seront effacées
-function regarderLignes(dataGrid as dataGridGame, tabLines ref as integer[])
+function calculateNumberOfDeleteLines(dataGrid as dataGridGame, tabLines ref as integer[])
 	lineNumb as integer = 0// Nombre de ligne à effacer
 	y as integer 
 	x as integer

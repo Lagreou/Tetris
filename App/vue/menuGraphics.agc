@@ -39,18 +39,18 @@ global menuInterface as GraphicsMenu
 
 // Affiche l'écran d'accueil et démarre la musique
 // d'écran d'accueil
-function afficherAccueil()
+function displaySplashScreen()
 	// On charge l'écran d'accueil
-	chargerSpriteAccueil()
+	loadSpriteSplashScreen()
 	
 	// On charge les boutons de l'accueil
-	chargedAndPositionedBoutonsMenu()
+	loadAndPositionedButtonsMenu()
 endfunction
 
-function chargerSpriteAccueil()
+function loadSpriteSplashScreen()
 	accueilLargeur as integer
 	
-	chargerImageAccueil()
+	loadSplashScreenImages()
 	menuInterface.spriteAccueil = CreateSprite(menuInterface.imageAccueil)
 	
 	// Obtention de la taille du sprite
@@ -60,7 +60,7 @@ function chargerSpriteAccueil()
 	SetSpriteSize(menuInterface.spriteAccueil,100,-1)
 endfunction
 
-function chargedAndPositionedBoutonsMenu()
+function loadAndPositionedButtonsMenu()
 	menuInterface.playButton = 1
 	
 	menuInterface.optionsButton = 2
@@ -87,7 +87,7 @@ function chargedAndPositionedBoutonsMenu()
 	SetVirtualButtonImageDown(menuInterface.exitButton, menuInterface.imageExitButton)
 endfunction
 
-function dechargerButtonsMenu()
+function unloadMenuButtons()
 	DeleteImage(menuInterface.imageOptionButton)
 	DeleteImage(menuInterface.imageExitButton)
 	DeleteImage(menuInterface.imagePlayButton )
@@ -97,7 +97,7 @@ function dechargerButtonsMenu()
 	DeleteVirtualButton(menuInterface.exitButton)
 endfunction
 
-function dechargerSpritesAccueil()
+function unloadSplashScreen()
 	DeleteSprite(menuInterface.spriteAccueil)
 	DeleteImage(menuInterface.imageAccueil)
 	
@@ -106,10 +106,10 @@ function dechargerSpritesAccueil()
 	DeleteImage(menuInterface.imageExitButton)
 	
 	// On supprime les boutons
-	dechargerButtonsMenu()
+	unloadMenuButtons()
 endfunction
 
 // Charge l'image d'accueil
-function chargerImageAccueil()
+function loadSplashScreenImages()
 	menuInterface.imageAccueil = LoadImage("splashScreen2.png")
 endfunction

@@ -122,7 +122,7 @@ function displayGameInterface()
 	updateGridBlocks()
 	
 	// On charge tout ce qui a attrait à l'interface
-	chargingGameInterface()
+	loadGameInterface()
 	
 endfunction
 
@@ -130,7 +130,7 @@ endfunction
 // de jeu
 function displayGameBackGroundAndMusic()
 	// On charge la musique du jeu
-	chargerMusiqueJeu()
+	loadGameMusic()
 	
 	// On charge l'écran du jeu
 	displayGameBackGround()
@@ -148,7 +148,7 @@ function displayGameBackGround()
 endfunction
 
 // Charge tous les éléments d'interface
-function chargingGameInterface()
+function loadGameInterface()
 	graphicsGameElements.imageleftAndRightBar = LoadImage("leftAndRight.png")
 	graphicsGameElements.spriteLeftBar = CreateSprite(graphicsGameElements.imageleftAndRightBar)
 	graphicsGameElements.spriteRightBar = CreateSprite(graphicsGameElements.imageleftAndRightBar)
@@ -166,7 +166,7 @@ function chargingGameInterface()
 	graphicsGameElements.frameCurrentLevelImage = LoadImage("level.png")
 	graphicsGameElements.SpriteFrameCurrentLevel = CreateSprite(graphicsGameElements.frameCurrentLevelImage)
 	
-	chargingAllImageNextFigureInMemory()
+	loadAllImageNextFigureInMemory()
 	
 	createAndPlacedBars()
 	createAndPlacedFrames()
@@ -176,7 +176,7 @@ endfunction
 
 // Permet de charger toutes les images des figures à
 // placer dans la case next en mémoire
-function chargingAllImageNextFigureInMemory()
+function loadAllImageNextFigureInMemory()
 	graphicsGameElements.tabImageNextFigure[0] = LoadImage("IImage.png")
 	graphicsGameElements.tabImageNextFigure[1] = LoadImage("OImage.png")
 	graphicsGameElements.tabImageNextFigure[2] = LoadImage("LImage.png")
@@ -188,7 +188,7 @@ endfunction
 
 // Permet de décharger toutes les images des figures à
 // placer dans la case next de la mémoire
-function dechargerAllImageNextFigureOutMemory()
+function unloadAllImageNextFigureOutMemory()
 	c as integer
 	
 	for c = 0 to graphicsGameElements.tabImageNextFigure.length
@@ -198,7 +198,7 @@ endFunction
 
 // Permet de décharger tous les sprites et image
 // de l'interface de la partie en cours
-function dechargerSpriteEtImageJeu()
+function unloadGameSpriteAndImageGame()
 	DeleteSprite(graphicsGameElements.spriteBackground)
 	
 	DeleteSprite(graphicsGameElements.spriteLeftBar)
@@ -218,8 +218,8 @@ function dechargerSpriteEtImageJeu()
 	DeleteImage(graphicsGameElements.frameScoreImage)
 	DeleteImage(graphicsGameElements.frameCurrentLevelImage)
 	
-	dechargerAllImageNextFigureOutMemory()
-	unchargingNextFigureSprite()
+	unloadAllImageNextFigureOutMemory()
+	unloadNextFigureSprite()
 endfunction
 
 // Permet de charger l'image de la prochaine
@@ -252,7 +252,7 @@ function chargingAndPlaceNextFigureSprite()
 endfunction
 
 // Efface le sprite de la prochaine figure dans le cadre next
-function unchargingNextFigureSprite()
+function unloadNextFigureSprite()
 	DeleteSprite(graphicsGameElements.nextFigureSprite)		
 endfunction
 
@@ -427,7 +427,7 @@ endfunction tabImage
 // Initialise la taille des blocs du tetris
 // selon l'affichage
 function initBlocSize()
-	definirLargeurArene()
+	defineWidthArea()
 	
 	// On calcul le % en largeur pour un bloc
 	graphicsGameElements.tailleBlocLargeurPourcent = graphicsGameElements.largeurArene / GRID_X
@@ -573,7 +573,7 @@ endfunction
 
 // Définit la largeur de l'arène grâce au facteur x
 //
-function definirLargeurArene()
+function defineWidthArea()
 	factor as float = 0.2
 	
 	// On definit la largeur de l'arene

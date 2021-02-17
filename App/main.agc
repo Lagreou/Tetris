@@ -1,50 +1,41 @@
 
-// Project: TetrisLike 
+// Project: FallingBloc 
 // Created: 2020-07-26
-
-// =============== INCLUSIONS =================== //
-
-#include "tetrisShape.agc"
-#include "gridGame.agc"
-#include "checkingShape.agc"
-#include "linesManagement.agc"
-#include "setup.agc"
-#include "input.agc"
-#include "game.agc"
-#include "gameGraphics.agc"
-#include "downloadDisplayGraphics.agc"
-#include "menuGraphics.agc"
-#include "gameMenu.agc"
-#include "optionsGraphics.agc"
-#include "optionInputs.agc"
+// Author : Marc Lagreou
 
 // Obligation de définir les types de variable
 #option_explicit
 
+// =============== INCLUSIONS =================== //
+
+#include "model/tetrisShape.agc"
+#include "model/gridGame.agc"
+#include "model/optionInputs.agc"
+#include "model/gameMenu.agc"
+#include "model/game.agc"
+#include "model/gameStates.agc"
+#include "vue/gameGraphics.agc"
+#include "vue/downloadDisplayGraphics.agc"
+#include "vue/menuGraphics.agc"
+#include "vue/optionsGraphics.agc"
+#include "utils/checkingShape.agc"
+#include "utils/linesManagement.agc"
+#include "utils/setup.agc"
+#include "utils/input.agc"
+#include "utils/music.agc"
+#include "utils/utilsFileScreenDisplay.agc"
+
 // ============== INSTRUCTIONS PRINCIPALES =============== //
 
 // ============ INITIALISATION DE L'ECRAN (contenu dans le setup) ============= //
-initDisplay()
 
-// Variable permettant de dire si le menu est chargé
-isAccueilCharged as integer = 0
-
-// Variable permettant de dire si une partie est en cours
-// (ecran de jeu chargé)
-isGameCharged as integer = 0
-
-isOptionCharged as integer = 0
-
-// Permet de voir si le programme vient juste d'être lancer
-// pour le premier affichage du menu 
-isGameLauch as integer = 1
-
-// Nombre de secondes dans le jeu
-secondsInGame as integer
-
+// Sprite représentant la jauge sur laquelle
+// le joueur a cliquer dans les options
 spriteOptionClic as integer
 
 // =============== INSTRUCTIONS POUR LE JEU ============== //
+initStates()
+initDisplay()
 
 // Initialisation par défaut des paramètres de jeu :
 // vitesse de jeu : tous les 25 tours
@@ -59,26 +50,15 @@ chargedMusicAndSoundVolume()
 // Boucle principale du jeu
 do
 	// Ici, on regarde si on est dans l'écran titre ou
-	// dans le jeu (mode 1 = écran titre, 2 = jeu )
+	// dans le jeu (mode 1 = écran titre, 2 = jeu, 3 = options)
 	select game.mode
 		case 1 :
-			if isAccueilCharged
+			if gameStates.isAccueilCharged
 				interceptClickedButton()
 			else
-				isAccueilCharged = 1
+				gameStates.isAccueilCharged = 1
 				
-				if(isGameCharged)
-					goToAccueilFromGame()
-					isGameCharged = 0
-				elseif(isOptionCharged)
-					goToMenuFromOption()
-					isOptionCharged = 0
-				elseif(isGameLauch)
-					afficherAccueil()
-					// On charge la musique d'accueil
-					chargerMusiqueAccueil()
-					isGameLauch = 0
-				endif
+				chooseGoodLoadSplashScreenFunction()			
 			endif
 			
 			// On synchronise à ce niveau car si l'utilisateur clic il faut
@@ -88,42 +68,42 @@ do
 		
 		case 2 :					
 			// ============ INSTRUCTIONS EN RAPPORT AVEC LA PARTIE ========== //
-			if isGameCharged
+			if gameStates.isGameCharged
 				playingGame()
 			else				
 				// Initialisation de l'écran de jeu
-				initialiserJeu()
+				initGame()
 				
 				// Ici, la partie est en cours de chargement
 				// donc booléen à vrai
-				isGameCharged = 1
+				gameStates.isGameCharged = 1
 				
 				// En revanche, l'écran d'accueil n'est plus chargé
-				isAccueilCharged = 0
+				gameStates.isAccueilCharged = 0
 				
-				isOptionCharged = 0
+				gameStates.isOptionCharged = 0
 			endif
 			sync()					
 		endcase
 		
 		case 3 :
-			if isOptionCharged		
+			if gameStates.isOptionCharged		
 				
 				scaleJauge as float
 				
 				// Ici, on regarde si on règle le son
-				spriteOptionClic = detecterClicSurImageSon()
+				spriteOptionClic = detectClicOnSoundImage()
 								
 				if(GetSpriteExists(spriteOptionClic))
 					// Ici on défini le scale selon si c'est la jauge de musique
 					// ou de son
 					if (spriteOptionClic = optionInterface.spriteMusicJauge)
 						scaleJauge = volumeMusic / 100
-						volumeMusic = bougerJauge(spriteOptionClic, scaleJauge) * 100
+						volumeMusic = moveJauge(spriteOptionClic, scaleJauge) * 100
 						SetMusicSystemVolumeOGG(volumeMusic)
 					elseif(spriteOptionClic = optionInterface.spriteSoundJauge)
 						scaleJauge = volumeSound/ 100
-						volumeSound = bougerJauge(spriteOptionClic, scaleJauge) * 100
+						volumeSound = moveJauge(spriteOptionClic, scaleJauge) * 100
 						SetSoundInstanceVolume(deleteLineSound, volumeSound)
 					endif		
 									
@@ -136,12 +116,14 @@ do
 					game.mode = 1
 				endif
 			else
-				goToOptionsFromMenu()
-				isAccueilCharged = 0
-				isOptionCharged = 1
+				goToOptionsFromSplashScreen()
+				gameStates.isAccueilCharged = 0
+				gameStates.isOptionCharged = 1
 			endif
 			sync()
 		endcase
+		
+		
 		
 	endselect
 loop
@@ -149,16 +131,18 @@ loop
 // ============== FONCTIONS ================ //
 
 // Initialisation du jeu
-function initialiserJeu()
+function initGame()
 	// Ecran de chargement pour le jeu
 	// Effacement de l'écran d'accueil
-	afficherChargement()
+	displayDownloading()
 	
 	game.level = 1
 	
 	game.score = 0
 	
 	game.changeShape = 0
+	
+	gameStates.isGameOver = 0
 	
 	// Initialisation des figures
 	game.shapes = setupShapes()
@@ -186,7 +170,7 @@ function initialiserJeu()
 	displayGameInterface()
 	
 	// On efface l'écran de chargement
-	effacerEcranChargement()
+	deleteDownloadingScreen()
 	
 	// On nettoie la grille
 	clearGrid(game.dataGrid)	
@@ -197,11 +181,11 @@ function reinitGame()
 	game.dataGrid.moveShapeX = 4
 	game.dataGrid.moveShapeY = 1
 	game.currentShape.moveShapeRotation = 1
-							
+	
 	// On à plus à effacer la figure
 	game.isShapeMoved = 0
 	game.changeShape = 0
-							
+	
 	// La prochaine figure devient l'actuelle et on
 	// choisi la prochaine à l'avance
 	game.currentShape = game.nextShape
@@ -209,9 +193,9 @@ function reinitGame()
 	game.nextShape = game.shapes[Random(1,7)]
 	
 	// On met à jour coté graphique
-	unchargingNextFigureSprite()
+	unloadNextFigureSprite()
 	chargingAndPlaceNextFigureSprite()
-							
+	
 	// Réinitialisation de la boucle de controle
 	// de vitesse (on réentame un cycle de 25 boucle
 	// sinon la vitesse de la figure sera plus rapide à son apparition)
@@ -229,10 +213,26 @@ function playingGame()
 	// On regarde si la figure peux aller en bas (si non, on change de figure)
 	game.changeShape = checkBelowShape(game.dataGrid, game.currentShape)
 	
-	if game.changeShape = 1
-		updateStatus()
-	else	
-						
+	while(game.changeShape = 1)
+		// On regarde si le joueur a dépasser la limite :
+		// GameOver dans ce cas
+		// Sinon on donne une chance au joueur de bouger
+		// sa figure
+		if(game.dataGrid.moveShapeY = 1)
+			displayGameOver()
+			game.changeShape = 0
+			gameStates.isGameOver = 1
+			game.mode = 1
+		else
+			if(game.lastMove <> 4)	
+				giveLastChanceToMove()
+			else
+				updateStatus()
+			endif
+		endif
+	endWhile	
+	
+	if(game.changeShape = 0 and gameStates.isGameOver = 0)
 		// Le joueur presse un bouton ? on récupere la rotation qui en résulte si rotation
 		// il y'a (directement dans dataGrid)
 		// On récupere également le type de mouvement (1,2,3,4) selon la direction sur laquelle
@@ -261,100 +261,98 @@ function playingGame()
 	endif
 endfunction
 
-// Permet de mettre à jour le jeu lorsque le changement de figure
-// est détecté (soit on continue soit game over)
-function updateStatus()
-	
-	// Permet de savoir si la figure peut aller en bas
-	canShapeMoveBottom as integer = 0
-	
+function giveLastChanceToMove()
 	// Permet de savoir si le joueur a bouger la figure
 	moveOk as integer
 	
 	// Permet de savoir le nombre de miliseconde passées dans le jeu
 	milisecondsInGame as integer
 	
-	// On regarde si le joueur a dépasser la limite :
-	// GameOver dans ce cas
-	if(game.dataGrid.moveShapeY = 1)
-		displayGameOver()
-	// On regarde si des lignes sont à effacées car
-	// la figure a atteint le bas
-	else
-		// On regarde que le dernier mouvement connu est différent de 4
-		// (mouvement vers le bas)
-		if(game.lastMove <> 4)
-			// On laisse le temps au joueur de se déplacer une dernière fois
+	milisecondsInGame = GetMilliseconds()
+	
+	// On regarde si le joueur bouge et peux atteindre un endroit vide
+	// pour réinitialiser changeShape
+	repeat
+		moveOk = executeMovementGiveByUser(game.dataGrid, game.currentShape)
+		
+		if(moveOk <> 0)			
+			// On efface la figure si il y'a eu mouvement
+			game.isShapeMoved = movingShape(game.currentShape, game.dataGrid, game.isShapeMoved)
+			updateGridBlocks()
+			// On réinitialise le timer
 			milisecondsInGame = GetMilliseconds()
-			
-			repeat
-				moveOk = executeMovementGiveByUser(game.dataGrid, game.currentShape)
-				
-				if(moveOk <> 0)
-					
-					// On efface la figure si il y'a eu mouvement
-					game.isShapeMoved = movingShape(game.currentShape, game.dataGrid, game.isShapeMoved)
-					
-					// On actualise les "dessins" sur la grille
-					updateGridBlocks()
-					
-					// On réinitialise le timer
-					milisecondsInGame = GetMilliseconds()
-					
-					// Tant que la figure peux descendre, ça continue
-					while(checkBelowShape(game.dataGrid, game.currentShape) = 0)
-						inc game.dataGrid.moveShapeY	
-						sync()
-					endwhile
-				endIf
-				// On synchronise pour que le gif continue de défiler malgrès l'attente
-				sync()					
-			until(GetMilliseconds() > milisecondsInGame + 500 or moveOk)
-		endif		
-							
-		// On regarde si des lignes sont à effacer
-		effacerLignes()
-		
-		// On regarde si la limite du score du niveau est atteinte.
-		// Si oui : on augmente la difficultée
-		if(game.score >= game.scoreLimit[game.level] and game.level <> 6)
-			inc game.level
-			// Mise à jour du label
-			levelLabelUpdate(game.level)
-		endif
-		
-		// On réinitialise les données comme si c'était la première
-		// figure
-		reinitGame()
+		endIf
+		// On synchronise pour que le gif d'arriere plan continue de défiler malgrès l'attente
+		sync()					
+	until(GetMilliseconds() > milisecondsInGame + 300 and moveOk = 0)
+	
+	if(checkBelowShape(game.dataGrid, game.currentShape) = 0)
+		game.changeShape = 0
+	else
+		updateStatus()
 	endif
-endfunction
+endFunction
 
-function goToAccueilFromGame()
+function updateStatus()
+	// On regarde si des lignes sont à effacer
+	deleteLines()
+	
+	// On regarde si la limite du score du niveau est atteinte.
+	// Si oui : on augmente la difficultée
+	if(game.score >= game.scoreLimit[game.level] and game.level <> 6)
+		inc game.level
+		// Mise à jour du label
+		levelLabelUpdate(game.level)
+	endif
+	
+	// On réinitialise les données comme si c'était la première
+	// figure
+	reinitGame()
+endFunction
+
+function goToSplashScreenFromGame()
 	// On decharge la musique de jeu (car on peux passer
 	// directement du jeu au menu
-	dechargerMusiqueJeu()
+	unloadGameMusic()
 	
 	// On decharge l'ecran de jeu
-	dechargerSpriteEtImageJeu()
+	unloadGameSpriteAndImageGame()
 	
 	// On charge la musique d'accueil
-	chargerMusiqueAccueil()
+	loadSplashScreenMusic()
 	
-	afficherAccueil()
+	displaySplashScreen()
 endfunction
 
-function goToOptionsFromMenu()
+function goToOptionsFromSplashScreen()
 	
 	// Déplacer le chargement car si dans le mauvais ordre
 	// peut provoquer des bugs
-	dechargerSpritesAccueil()	
+	unloadSplashScreen()	
 	
-	chargerInterfaceGraphicsOptions()
+	loadInterfaceGraphicsOptions()
 endfunction
 
-function goToMenuFromOption()
+function goToSplashScreenFromOption()
 	// On décharge l'interface d'option
-	dechargedAllImagesOption()
+	unloadAllImagesOption()
 	
-	afficherAccueil()
+	displaySplashScreen()
 endFunction
+
+// Permet de charger le splashScreen en fonction
+// de la où le joueur vient
+function chooseGoodLoadSplashScreenFunction()
+	if(gameStates.isGameCharged)
+		goToSplashScreenFromGame()
+		gameStates.isGameCharged = 0
+	elseif(gameStates.isOptionCharged)
+		goToSplashScreenFromOption()
+		gameStates.isOptionCharged = 0
+	elseif(gameStates.isFirstGameLaunch)
+		displaySplashScreen()
+		// On charge la musique d'accueil
+		loadSplashScreenMusic()
+		gameStates.isFirstGameLaunch = 0
+	endif
+endfunction

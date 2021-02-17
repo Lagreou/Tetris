@@ -48,10 +48,10 @@ global optionInterface as GraphicsOption
 // ================== FONCTIONS ===================
 // ================================================
 
-function chargerInterfaceGraphicsOptions()
+function loadInterfaceGraphicsOptions()
 	
 	// On charge les images
-	chargerImageOptions()
+	loadImageOptions()
 	
 	// On créer les sprites
 	initialiserSprites()
@@ -61,7 +61,7 @@ function chargerInterfaceGraphicsOptions()
 endfunction
 
 // Charge les images de l'interface en mémoire
-function chargerImageOptions()
+function loadImageOptions()
 	// On charge l'image de la barre de musique
 	optionInterface.imageMusicBar = LoadImage("musicVolumeImage.png")
 	
@@ -75,7 +75,7 @@ function chargerImageOptions()
 endfunction
 
 // Permet de charger les boutons et de les placés
-function chargedVirtualButtonOptions()
+function loadVirtualButtonOptions()
 	optionInterface.exitButton = 1
 	optionInterface.imageExitButton = LoadImage("ExitButton.png")
 	
@@ -103,7 +103,7 @@ function placedSpritesOption()
 	
 	placedSpriteBars()
 	placedJauge()
-	chargedVirtualButtonOptions()
+	loadVirtualButtonOptions()
 endfunction
 
 // Placement des sprites de description
@@ -156,8 +156,8 @@ function placedJauge()
 endfunction
 
 // Déchargement des sprites, images et boutons
-function dechargedAllImagesOption()
-	dechargerButtonsOptions()
+function unloadAllImagesOption()
+	unloadButtonsOptions()
 	
 	DeleteSprite(optionInterface.spriteMusicBar)
 	DeleteSprite(optionInterface.spriteMusicJauge)
@@ -170,7 +170,7 @@ function dechargedAllImagesOption()
 endfunction
 
 // Permet de décharger les boutons virtuels
-function dechargerButtonsOptions()
+function unloadButtonsOptions()
 	DeleteImage(optionInterface.imageExitButton)
 	
 	DeleteVirtualButton(optionInterface.exitButton)

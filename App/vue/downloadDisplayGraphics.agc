@@ -13,13 +13,13 @@ global chargingSprite as integer
 //================================================
 
 // Permet d'afficher l'écran de chargement
-function afficherChargement()
+function displayDownloading()
 	
 	// On decharge la musique de l'accueil
-	dechargerMusiqueAccueil()
+	unloadSplashScreenMusic()
 	
 	// On decharge l'ecran d'accueil
-	dechargerSpritesAccueil()
+	unloadSplashScreen()
 	
 	imageLoading = LoadImage("loading2.gif")
 	chargingSprite = CreateSprite(imageLoading)
@@ -33,7 +33,7 @@ function afficherChargement()
 endfunction
 
 // Permet d'effacer l'écran de chargement
-function effacerEcranChargement()
+function deleteDownloadingScreen()
 	// On supprime l'image pour le chargement
 	DeleteSprite(chargingSprite)
 	DeleteImage(imageLoading)

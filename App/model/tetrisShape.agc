@@ -150,7 +150,7 @@ endfunction shapesSetup
 // Permet de déterminer la première et la dernière colonne
 // pour lesquelles des blocks sont présents pour la rotation
 // actuelle
-function determinerColonnes(shape as TetrisShape)
+function determinateFirstAndLastColumns(shape as TetrisShape)
 	tabCol as integer[2]
 	i as integer = 1
 	find as integer = 0
