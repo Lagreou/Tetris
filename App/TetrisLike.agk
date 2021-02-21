@@ -69,12 +69,7 @@ FILE_18=model%2FgameStates.agc;-1
 FILE_19=utils%2Futils.agc;-1
 
 [files]
-FILE_NAME_0=0;main.agc;8684;1
-FILE_NAME_1=0;utils%2Fsetup.agc;128;0
-FILE_NAME_2=0;utils%2FutilsFileScreenDisplay.agc;857;5
-FILE_NAME_3=1;vue%2FgameOverGraphics.agc;947;4
-FILE_NAME_4=0;model%2FgameOverDatas.agc;1200;3
-FILE_NAME_5=0;utils%2Futils.agc;161;2
+FILE_NAME_0=0;model%2FgridGame.agc;2189;1
 
 [project]
 description=
